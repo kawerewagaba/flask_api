@@ -2,6 +2,8 @@ class Config(object):
     """
     Common configurations
     """
+    
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Put any configurations here that are common across all environments
 
