@@ -8,4 +8,4 @@ install:
   - pip install flask
 # command to run tests
 script:
-  - unittest
+  - python test_bucketlist.py
