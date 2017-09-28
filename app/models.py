@@ -7,12 +7,14 @@ class Bucketlist(db.Model):
 
     __tablename__ = 'bucketlists'
 
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    date_created = db.Column(db.DateTime, default = db.func.current_timestamp())
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
-        db.DateTime, default = db.func.current_timestamp(),
-        onupdate = db.func.current_timestamp())
+        db.DateTime,
+        default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp()
+    )
 
     def __init__(self, name):
         """
@@ -27,6 +29,11 @@ class Bucketlist(db.Model):
     @staticmethod
     def get_all():
         return Bucketlist.query.all()
+        """
+        Side Note:
+        Any class you declare as inheriting from 'db.Model'
+        won't have 'query' member until the code runs
+        """
 
     def delete(self):
         db.session.delete(self)
