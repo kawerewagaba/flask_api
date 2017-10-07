@@ -1,4 +1,4 @@
-from app import db, Bucketlist
+from app import db
 from flask_bcrypt import Bcrypt # password hashing algorithm
 
 class User(db.Model):

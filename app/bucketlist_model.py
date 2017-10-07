@@ -1,4 +1,4 @@
-from app import db, Item
+from app import db
 
 class Bucketlist(db.Model):
     """

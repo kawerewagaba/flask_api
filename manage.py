@@ -6,7 +6,7 @@ from app import db, create_app
 """
 Importing the models below
 """
-from app import bucketlist_model, user_model
+from app import bucketlist_model, user_model, item_model
 
 app = create_app(config_name=os.getenv('FLASK_CONFIG'))
 migrate = Migrate(app, db)
