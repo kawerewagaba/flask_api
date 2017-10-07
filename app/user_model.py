@@ -1,4 +1,4 @@
-from app import db
+from app import db, Bucketlist
 from flask_bcrypt import Bcrypt # password hashing algorithm
 
 class User(db.Model):
@@ -8,12 +8,11 @@ class User(db.Model):
 
     __tablename__ = 'users'
 
-    # Define the columns of the users table, starting with the primary key
+    # Define the fields of the users table, starting with the primary key
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(256), nullable=False, unique=True)
     password = db.Column(db.String(256), nullable=False)
-    bucketlists = db.relationship(
-        'Bucketlist', order_by='Bucketlist.id', cascade="all, delete-orphan")
+    bucketlists = db.relationship('Bucketlist', backref='bucketlists', lazy=True)
 
     def __init__(self, email, password):
         """Initialize the user with an email and a password."""

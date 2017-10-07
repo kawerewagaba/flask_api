@@ -1,20 +1,19 @@
-from app import db
+from app import db, Item
 
 class Bucketlist(db.Model):
     """
-    This class defines the bucketlist table
+    This class defines the bucketlists table
     """
 
     __tablename__ = 'bucketlists'
 
+    # Defining the fields
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(255), nullable=False, unique=True)
+    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    items = db.relationship('Item', backref='items', lazy=True)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(
-        db.DateTime,
-        default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp()
-    )
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
     def __init__(self, name):
         """
