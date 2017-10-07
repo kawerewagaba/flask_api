@@ -11,3 +11,5 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256), nullable=False, unique=True)
     bucketlist = db.Column(db.Integer, db.ForeignKey('bucketlists.id'), nullable=False)
+
+    

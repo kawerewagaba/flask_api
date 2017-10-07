@@ -39,4 +39,4 @@ class Bucketlist(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "<Bucketlist: {}>".format(self.name)
+        return '<Bucketlist: {}>'.format(self.name)
