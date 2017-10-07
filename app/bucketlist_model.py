@@ -25,15 +25,6 @@ class Bucketlist(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    @staticmethod
-    def get_all():
-        return Bucketlist.query.all() # gets all bucketlists in a single query
-        """
-        Side Note:
-        Any class you declare as inheriting from 'db.Model'
-        won't have 'query' member until the code runs
-        """
-
     def delete(self):
         db.session.delete(self)
         db.session.commit()
