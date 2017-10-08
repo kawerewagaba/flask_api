@@ -1,5 +1,7 @@
-# Get access to the Bucketlist model
-from app.models import Bucketlist
+from flask import request, jsonify, abort
+
+from app import app
+from app.bucketlist_model import Bucketlist
 
 @app.route('/bucketlists/', methods=['POST', 'GET'])
 def bucketlists():
