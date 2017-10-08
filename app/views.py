@@ -3,6 +3,10 @@ from flask import request, jsonify, abort
 from app import app
 from app.bucketlist_model import Bucketlist
 
+@app.route('/')
+def index():
+    return 'Bucketlist Ready'
+
 @app.route('/bucketlists/', methods=['POST', 'GET'])
 def bucketlists():
     if request.method == "POST":
