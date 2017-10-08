@@ -1,4 +1,5 @@
 from app import db
+from app.item_model import Item
 
 class Bucketlist(db.Model):
     """
@@ -24,6 +25,10 @@ class Bucketlist(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return Bucketlist.query.all()
 
     def delete(self):
         db.session.delete(self)
