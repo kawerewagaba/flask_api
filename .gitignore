@@ -97,3 +97,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# my temporary code
+temp_code.py
