@@ -5,7 +5,7 @@ from app import db, app
 """
 Importing the models below
 """
-from app import bucketlist_model, user_model, item_model
+from app import models
 
 migrate = Migrate(app, db)
 manager = Manager(app)
