@@ -1,9 +1,20 @@
 language: python
 python:
   - "3.6"
+service:
+  - postgresql
 # command to install dependencies
+before_install:
+  - export FLASK_APP=run.py
+  - export SQLALCHEMY_DATABASE_URI='postgresql://localhost/test_db'
 install:
   - pip install -r requirements.txt
+  - pip install coveralls
+before_script:
+  - psql -C 'create database test_db;' -U postgres
 # command to run tests
 script:
   - python test_bucketlist.py
+
+after_success:
+  - coveralls
