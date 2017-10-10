@@ -6,7 +6,6 @@ service:
 # command to install dependencies
 before_install:
   - export FLASK_APP=run.py
-  - export SQLALCHEMY_DATABASE_URI='postgresql://localhost/test_db'
 install:
   - pip install -r requirements.txt
   - pip install coveralls
