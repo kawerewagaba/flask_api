@@ -55,8 +55,8 @@ class Bucketlist(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all():
-        return Bucketlist.query.all()
+    def get_all(user_id):
+        return Bucketlist.query.filter_by(user_id=user_id)
 
     def delete(self):
         db.session.delete(self)
