@@ -11,7 +11,8 @@ class User(db.Model):
     email = db.Column(db.String(256), nullable=False, unique=True)
     password = db.Column(db.String(256), nullable=False)
     bucketlists = db.relationship(
-        'Bucketlist', order_by='Bucketlist.id', cascade="all, delete-orphan")
+        'Bucketlist', backref='users', lazy=True
+    )
 
     def __init__(self, email, password):
         """Initialize the user with an email and a password."""
@@ -43,6 +44,7 @@ class Bucketlist(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp()
     )
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __init__(self, name):
         """initialize with name."""
