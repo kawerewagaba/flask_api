@@ -55,14 +55,15 @@ def create_app(config_name):
      # retrieve a buckelist using it's ID
         bucketlist = Bucketlist.query.filter_by(id=id).first()
         if not bucketlist:
-            # Raise an HTTPException with a 404 not found status code
-            abort(404)
+            return {
+                "message": "no bucketlist with id: {}".format(id)
+            }, 404
 
         if request.method == 'DELETE':
             bucketlist.delete()
             return {
-            "message": "bucketlist {} deleted successfully".format(bucketlist.id)
-         }, 200
+                "message": "bucketlist {} deleted successfully".format(bucketlist.id)
+             }, 200
 
         elif request.method == 'PUT':
             name = str(request.data.get('name', ''))
