@@ -18,9 +18,25 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
+    """create user"""
+    @app.route('/auth/register/', methods=['POST'])
+    def create_user():
+        email = str(request.data.get('email'))
+        password = str(request.data.get('password'))
+        user = User(email, password)
+        user.save()
+        response = jsonify({
+        'id': user.id,
+        'email': user.email
+        })
+        response.status_code = 201
+        return response
+
+    """create, and retrieve bucketlists"""
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
         if request.method == "POST":
+            # create bucketlists
             name = str(request.data.get('name', ''))
             if name:
                 bucketlist = Bucketlist(name=name)
@@ -34,7 +50,7 @@ def create_app(config_name):
                 response.status_code = 201
                 return response
         else:
-            # GET
+            # GET all bucketlists
             bucketlists = Bucketlist.get_all()
             results = []
 
@@ -50,6 +66,7 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
+    """edit, delete bucketlist"""
     @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def bucketlist_manipulation(id, **kwargs):
      # retrieve a buckelist using it's ID
@@ -60,12 +77,14 @@ def create_app(config_name):
             }, 404
 
         if request.method == 'DELETE':
+            # delete bucketlist
             bucketlist.delete()
             return {
                 "message": "bucketlist {} deleted successfully".format(bucketlist.id)
              }, 200
 
         elif request.method == 'PUT':
+            # edit bucketlist
             name = str(request.data.get('name', ''))
             bucketlist.name = name
             bucketlist.save()
@@ -78,7 +97,7 @@ def create_app(config_name):
             response.status_code = 200
             return response
         else:
-            # GET
+            # GET bucketlist by id
             response = jsonify({
                 'id': bucketlist.id,
                 'name': bucketlist.name,
