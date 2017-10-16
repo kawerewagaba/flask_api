@@ -24,7 +24,7 @@ class UserTestCase(unittest.TestCase):
 
     def test_user_creation(self):
         """Test API can create a user (POST request) """
-        response = self.client().post('/auth/register/', data=self.user)
+        response = self.client().post('/auth/register', data=self.user)
         self.assertEqual(response.status_code, 201)
         self.assertIn('test_email', str(response.data))
 

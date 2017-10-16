@@ -19,7 +19,7 @@ def create_app(config_name):
     db.init_app(app)
 
     """create user"""
-    @app.route('/auth/register/', methods=['POST'])
+    @app.route('/auth/register', methods=['POST'])
     def create_user():
         email = str(request.data.get('email'))
         password = str(request.data.get('password'))
