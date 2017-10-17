@@ -20,7 +20,7 @@ def create_app(config_name):
 
     """create user"""
     @app.route('/auth/register', methods=['POST'])
-    def create_user():
+    def user_creation():
         email = str(request.data.get('email'))
         password = str(request.data.get('password'))
         user = User(email, password)
@@ -31,6 +31,26 @@ def create_app(config_name):
         })
         response.status_code = 201
         return response
+
+    """login user"""
+    @app.route('/auth/login', methods=['POST'])
+    def user_login():
+        # first check if user with email exists
+        user = User.query.filter_by(email=request.data.get('email')).first()
+        if user and user.password_is_valid(request.data.get('password')):
+            # correct credentials
+            # using a mock token. shall create one later
+            response = {
+                'message': 'You logged in successfully',
+                'access_token': user.id
+            }
+            return response
+        else:
+            # user does not exists
+            response = {
+                'message': 'Verify credentials and try again'
+            }
+            return response
 
     """create, and retrieve bucketlists"""
     @app.route('/bucketlists/', methods=['POST', 'GET'])
