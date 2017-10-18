@@ -1,6 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
+import jwt
 
 # initialize sql-alchemy
 """
@@ -39,12 +40,14 @@ def create_app(config_name):
         user = User.query.filter_by(email=request.data.get('email')).first()
         if user and user.password_is_valid(request.data.get('password')):
             # correct credentials
-            # using a mock token. shall create one later
-            response = {
-                'message': 'You logged in successfully',
-                'access_token': user.id
-            }
-            return response
+            # generate access token. this will be used as the authorization header
+            access_token = user.generate_token(user.id)
+            if access_token:
+                response = {
+                    'message': 'You logged in successfully',
+                    'access_token': access_token.decode()
+                }
+                return response
         else:
             # user does not exists
             response = {
