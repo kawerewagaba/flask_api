@@ -1,13 +1,14 @@
+"""Tests user resgidtration, and authentication"""
+
+import unittest
+import json
+
 # adding the parent directory when searching for modules
 import sys
 sys.path.append('../')
 # still fails when called outside parent directory
 
-import unittest
-import json
-
 from app import create_app, db
-from flask_bcrypt import Bcrypt
 
 class UserTestCase(unittest.TestCase):
     """This class represents the user test case"""
