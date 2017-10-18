@@ -3,11 +3,6 @@
 import unittest
 import json
 
-# adding the parent directory when searching for modules
-import sys
-sys.path.append('../')
-# still fails when called outside parent directory
-
 from app import create_app, db
 
 class UserTestCase(unittest.TestCase):
