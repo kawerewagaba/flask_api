@@ -11,6 +11,22 @@ class BucketlistTestCase(unittest.TestCase):
         self.client = self.app.test_client
         self.bucketlist = {'name': 'Career goals'}
 
+        def register_user(self, email='test@user.com', password='test_pass'):
+            # method helps us create a new user
+            user = {
+                'email': email,
+                'password': password
+            }
+            return self.client().post('/auth/register', data=user)
+
+        def login_user(self, email='test@user.com', password='test_pass'):
+            # methods helps login created user
+            user = {
+                'email': email,
+                'password': password
+            }
+            return self.client().post('/auth/login', data=user)
+
         # binds the app to the current context
         with self.app.app_context():
             # create all tables
