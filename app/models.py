@@ -91,9 +91,10 @@ class Bucketlist(db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    def __init__(self, name):
-        """initialize with name."""
+    def __init__(self, name, user_id):
+        """initialize with name and owner."""
         self.name = name
+        self.user_id = user_id
 
     def save(self):
         db.session.add(self)
