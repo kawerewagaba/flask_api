@@ -58,37 +58,48 @@ def create_app(config_name):
     """create, and retrieve bucketlists"""
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
-        if request.method == "POST":
-            # create bucketlists
-            name = str(request.data.get('name', ''))
-            if name:
-                bucketlist = Bucketlist(name=name)
-                bucketlist.save()
-                response = jsonify({
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified
-                })
-                response.status_code = 201
+        # get the access token from the header
+        auth_header = request.headers.get('Authorization')
+        access_token = auth_header.split(" ")[1]
+        if access_token:
+            # attempt to decode the token and get the user id
+            user_id = User.decode_token(access_token)
+            # go ahead and handle the request, user is authenticated
+            if request.method == "POST":
+                # create bucketlists
+                name = str(request.data.get('name', ''))
+                if name:
+                    bucketlist = Bucketlist(name=name, user_id=user_id)
+                    bucketlist.save()
+                    response = jsonify({
+                        'id': bucketlist.id,
+                        'name': bucketlist.name,
+                        'date_created': bucketlist.date_created,
+                        'date_modified': bucketlist.date_modified,
+                        'created_by': user_id
+                    })
+                    response.status_code = 201
+                    return response
+            else:
+                # GET all bucketlists
+                bucketlists = Bucketlist.get_all()
+                results = []
+
+                for bucketlist in bucketlists:
+                    obj = {
+                        'id': bucketlist.id,
+                        'name': bucketlist.name,
+                        'date_created': bucketlist.date_created,
+                        'date_modified': bucketlist.date_modified
+                    }
+                    results.append(obj)
+                response = jsonify(results)
+                response.status_code = 200
                 return response
+
         else:
-            # GET all bucketlists
-            bucketlists = Bucketlist.get_all()
-            results = []
-
-            for bucketlist in bucketlists:
-                obj = {
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified
-                }
-                results.append(obj)
-            response = jsonify(results)
-            response.status_code = 200
-            return response
-
+            # user is not legit
+            return {'Authentication': 'You are not authorized to access this page'}
     """edit, delete bucketlist"""
     @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def bucketlist_manipulation(id, **kwargs):
