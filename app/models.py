@@ -114,7 +114,7 @@ class Bucketlist(db.Model):
     def __repr__(self):
         return "<Bucketlist: {}>".format(self.name)
 
-class Item(db.Models):
+class Item(db.Model):
     """This class represents the items table."""
 
     __tablename__ = 'items'
