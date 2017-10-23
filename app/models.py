@@ -110,3 +110,16 @@ class Bucketlist(db.Model):
 
     def __repr__(self):
         return "<Bucketlist: {}>".format(self.name)
+
+class Item(db.Models):
+    """This class represents the items table."""
+
+    __tablename__ = 'items'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'), nullable=False)
+
+    def __repr__(self):
+        return "<Item: {}>".format(self.name)
