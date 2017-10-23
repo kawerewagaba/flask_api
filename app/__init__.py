@@ -58,99 +58,111 @@ def create_app(config_name):
     """create, and retrieve bucketlists"""
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
-        # get the access token from the header
-        auth_header = request.headers.get('Authorization')
-        access_token = auth_header.split(" ")[1]
-        if access_token:
-            # attempt to decode the token and get the user id
-            user_id = User.decode_token(access_token)
-            # go ahead and handle the request, user is authenticated
-            if request.method == "POST":
-                # create bucketlists
-                name = str(request.data.get('name', ''))
-                if name:
-                    bucketlist = Bucketlist(name=name, user_id=user_id)
-                    bucketlist.save()
-                    response = jsonify({
-                        'id': bucketlist.id,
-                        'name': bucketlist.name,
-                        'date_created': bucketlist.date_created,
-                        'date_modified': bucketlist.date_modified,
-                        'created_by': user_id
-                    })
-                    response.status_code = 201
-                    return response
-            else:
-                # GET all bucketlists
-                bucketlists = Bucketlist.query.filter_by(user_id=user_id)
-                results = []
+        try:
+            # get the access token from the header
+            auth_header = request.headers.get('Authorization')
+            access_token = auth_header.split(" ")[1]
+            if access_token:
+                # attempt to decode the token and get the user id
+                user_id = User.decode_token(access_token)
+                if not isinstance(user_id, str):
+                    # returned ID is an int
+                    # go ahead and handle the request, user is authenticated
+                    if request.method == "POST":
+                        # create bucketlists
+                        name = str(request.data.get('name', ''))
+                        if name:
+                            bucketlist = Bucketlist(name=name, user_id=user_id)
+                            bucketlist.save()
+                            response = jsonify({
+                                'id': bucketlist.id,
+                                'name': bucketlist.name,
+                                'date_created': bucketlist.date_created,
+                                'date_modified': bucketlist.date_modified,
+                                'created_by': user_id
+                            })
+                            response.status_code = 201
+                            return response
+                    else:
+                        # GET all bucketlists
+                        bucketlists = Bucketlist.query.filter_by(user_id=user_id)
+                        results = []
 
-                for bucketlist in bucketlists:
-                    obj = {
-                        'id': bucketlist.id,
-                        'name': bucketlist.name,
-                        'date_created': bucketlist.date_created,
-                        'date_modified': bucketlist.date_modified,
-                        'created_by': user_id
-                    }
-                    results.append(obj)
-                response = jsonify(results)
-                response.status_code = 200
-                return response
+                        for bucketlist in bucketlists:
+                            obj = {
+                                'id': bucketlist.id,
+                                'name': bucketlist.name,
+                                'date_created': bucketlist.date_created,
+                                'date_modified': bucketlist.date_modified,
+                                'created_by': user_id
+                            }
+                            results.append(obj)
+                        response = jsonify(results)
+                        response.status_code = 200
+                        return response
+                else:
+                    # authentication failure
+                    # user_id returns the output from the decode function
+                    return {'Error': user_id}
 
-        else:
+        except:
             # user is not legit
             return {'Authentication': 'You are not authorized to access this page'}
 
     """edit, delete bucketlist"""
     @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def bucketlist_manipulation(id, **kwargs):
-        # get the access token from the header
-        auth_header = request.headers.get('Authorization')
-        access_token = auth_header.split(" ")[1]
-        if access_token:
-            # attempt to decode the token and get the user id
-            user_id = User.decode_token(access_token)
-            # retrieve a buckelist using it's ID
-            bucketlist = Bucketlist.query.filter_by(id=id).first()
-            if not bucketlist:
-                return {
-                    "message": "no bucketlist with id: {}".format(id)
-                }, 404
+        try:
+            # get the access token from the header
+            auth_header = request.headers.get('Authorization')
+            access_token = auth_header.split(" ")[1]
+            if access_token:
+                # attempt to decode the token and get the user id
+                user_id = User.decode_token(access_token)
+                if not isinstance(user_id, str):
+                    # retrieve a buckelist using it's ID
+                    bucketlist = Bucketlist.query.filter_by(id=id).first()
+                    if not bucketlist:
+                        return {
+                            "message": "no bucketlist with id: {}".format(id)
+                        }, 404
 
-            if request.method == 'DELETE':
-                # delete bucketlist
-                bucketlist.delete()
-                return {
-                    "message": "bucketlist {} deleted successfully".format(bucketlist.id)
-                 }, 200
+                    if request.method == 'DELETE':
+                        # delete bucketlist
+                        bucketlist.delete()
+                        return {
+                            "message": "bucketlist {} deleted successfully".format(bucketlist.id)
+                         }, 200
 
-            elif request.method == 'PUT':
-                # edit bucketlist
-                name = str(request.data.get('name', ''))
-                bucketlist.name = name
-                bucketlist.save()
-                response = jsonify({
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified,
-                    'created_by': user_id
-                })
-                response.status_code = 200
-                return response
-            else:
-                # GET bucketlist by id
-                response = jsonify({
-                    'id': bucketlist.id,
-                    'name': bucketlist.name,
-                    'date_created': bucketlist.date_created,
-                    'date_modified': bucketlist.date_modified,
-                    'created_by': user_id
-                })
-                response.status_code = 200
-                return response
-        else:
+                    elif request.method == 'PUT':
+                        # edit bucketlist
+                        name = str(request.data.get('name', ''))
+                        bucketlist.name = name
+                        bucketlist.save()
+                        response = jsonify({
+                            'id': bucketlist.id,
+                            'name': bucketlist.name,
+                            'date_created': bucketlist.date_created,
+                            'date_modified': bucketlist.date_modified,
+                            'created_by': user_id
+                        })
+                        response.status_code = 200
+                        return response
+                    else:
+                        # GET bucketlist by id
+                        response = jsonify({
+                            'id': bucketlist.id,
+                            'name': bucketlist.name,
+                            'date_created': bucketlist.date_created,
+                            'date_modified': bucketlist.date_modified,
+                            'created_by': user_id
+                        })
+                        response.status_code = 200
+                        return response
+                else:
+                    # authentication failure
+                    return {'Error': user_id}
+        except:
             # user is not legit
             return {'Authentication': 'You are not authorized to access this page'}
 
