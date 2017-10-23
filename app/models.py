@@ -90,6 +90,9 @@ class Bucketlist(db.Model):
         onupdate=db.func.current_timestamp()
     )
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    items = db.relationship(
+        'Item', backref='bucketlists', lazy=True
+    )
 
     def __init__(self, name, user_id):
         """initialize with name and owner."""
