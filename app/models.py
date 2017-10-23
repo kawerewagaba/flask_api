@@ -124,5 +124,18 @@ class Item(db.Model):
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'), nullable=False)
 
+    def __init__(self, name, bucketlist_id):
+        """initialize with name and bucketlist"""
+        self.name = name
+        self.bucketlist_id = bucketlist_id
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
     def __repr__(self):
         return "<Item: {}>".format(self.name)
