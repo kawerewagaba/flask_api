@@ -16,6 +16,12 @@ class ItemTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
+            # register a test user then log them in
+            self.register_user()
+            result = self.login_user()
+            # obtain the access token
+            self.access_token = json.loads(result.data.decode())['access_token']
+
     def register_user(self, email='test@user.com', password='test_pass'):
         # method helps us create a new user
         user = {
@@ -34,18 +40,12 @@ class ItemTestCase(unittest.TestCase):
 
     def create_bucketlist(self, name='Lifestyle'):
         # method helps to create a bucketlist
-        # register a test user then log them in
-        self.register_user()
-        result = self.login_user()
-        # obtain the access token
-        access_token = json.loads(result.data.decode())['access_token']
-        # ensure the request has an authorization header set with the access token in it.
         bucketlist = {
             'name': name
         }
         return self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization='Bearer ' + self.access_token),
             data=bucketlist
         )
 
@@ -56,7 +56,19 @@ class ItemTestCase(unittest.TestCase):
         bucketlist_id = json.loads(result.data.decode())['id']
         res = self.client().post(
             '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization='Bearer ' + self.access_token),
             data=self.item
         )
         self.assertEqual(res.status_code, 201)
         self.assertIn('tesla', str(res.data))
+
+    def tearDown(self):
+        """teardown all initialized variables."""
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
+
+# Make the tests conveniently executable
+if __name__ == "__main__":
+    unittest.main()
