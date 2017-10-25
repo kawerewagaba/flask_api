@@ -166,4 +166,32 @@ def create_app(config_name):
             # user is not legit
             return {'Authentication': 'You are not authorized to access this page'}
 
+    """ add and view items """
+    @app.route('/bucketlists/<int:id>/items/', methods=['POST', 'GET'])
+    def add_item(id):
+        try:
+            # get the access token from the header
+            auth_header = request.headers.get('Authorization')
+            access_token = auth_header.split(" ")[1]
+            if access_token:
+                if request.method == 'POST':
+                    name = str(request.data.get('name'))
+                    if name:
+                        item = Item(name=name, bucketlist_id=id)
+                        item.save()
+                        response = jsonify({
+                            'id': item.id,
+                            'name': item.name,
+                            'date_created': item.date_created,
+                            'bucketlist_id': id
+                        })
+                        response.status_code = 201
+                        return response
+                elif request.method == 'GET':
+                    pass
+            else:
+                return {'Authentication': 'You are not authorized to access this page'}
+        except Exception as e:
+            return {'Error': e}
+
     return app
