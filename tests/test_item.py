@@ -62,6 +62,23 @@ class ItemTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertIn('tesla', str(res.data))
 
+    def test_get_items_in_bucketlist(self):
+        """ test API gets items in a bucketlist """
+        result = self.create_bucketlist()
+        # we need to obtain bucketlist ID
+        bucketlist_id = json.loads(result.data.decode())['id']
+        # first add the item
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization='Bearer ' + self.access_token),
+            data=self.item
+        )
+        self.assertEqual(res.status_code, 201)
+        # then check if it exists
+        res = self.client().get('/bucketlists/{}/items/'.format(bucketlist_id), headers=dict(Authorization='Bearer ' + self.access_token))
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('tesla', str(res.data))
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():
