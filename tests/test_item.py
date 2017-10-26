@@ -101,7 +101,7 @@ class ItemTestCase(unittest.TestCase):
         )
         # then check if it has changed
         res = self.client().get(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization='Bearer ' + self.access_token)
         )
         self.assertEqual(res.status_code, 200)

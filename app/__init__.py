@@ -188,7 +188,64 @@ def create_app(config_name):
                         response.status_code = 201
                         return response
                 elif request.method == 'GET':
-                    pass
+                    items = Item.query.filter_by(bucketlist_id=id)
+                    results = []
+                    for item in items:
+                        obj = {
+                            'id': item.id,
+                            'name': item.name,
+                            'date_created': item.date_created,
+                            'bucketlist_id': id
+                        }
+                        results.append(obj)
+                    response = jsonify(results)
+                    response.status_code = 200
+                    return response
+            else:
+                return {'Authentication': 'You are not authorized to access this page'}
+        except Exception as e:
+            return {'Error': e}
+
+    """ edit and delete item """
+    @app.route('/bucketlists/<int:bucketlist_id>/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
+    def item_edit_or_delete(bucketlist_id, item_id):
+        try:
+            # get the access token from the header
+            auth_header = request.headers.get('Authorization')
+            access_token = auth_header.split(" ")[1]
+            if access_token:
+                item = Item.query.filter_by(id=item_id).first()
+                if not item:
+                    return {'message': 'No item with id {}'.format(item_id)}, 404
+                else:
+                    if request.method == 'PUT':
+                        # edit item
+                        name = str(request.data.get('name'))
+                        if name:
+                            item.name = name
+                            item.save()
+                            response = jsonify({
+                                'id': item.id,
+                                'name': item.name,
+                                'date_created': item.date_created,
+                                'bucketlist_id': bucketlist_id
+                            })
+                            response.status_code = 201
+                            return response
+                    elif request.method == 'DELETE':
+                        # delete item
+                        item.delete()
+                        return {'message': 'Item with id {} has been deleted.'.format(item_id)}, 200
+                    else:
+                        # get item by ID
+                        response = jsonify({
+                            'id': item.id,
+                            'name': item.name,
+                            'date_created': item.date_created,
+                            'bucketlist_id': bucketlist_id
+                        })
+                        response.status_code = 200
+                        return response
             else:
                 return {'Authentication': 'You are not authorized to access this page'}
         except Exception as e:
