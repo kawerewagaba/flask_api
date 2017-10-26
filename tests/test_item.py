@@ -75,7 +75,10 @@ class ItemTestCase(unittest.TestCase):
         )
         self.assertEqual(res.status_code, 201)
         # then check if it exists
-        res = self.client().get('/bucketlists/{}/items/'.format(bucketlist_id), headers=dict(Authorization='Bearer ' + self.access_token))
+        res = self.client().get(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization='Bearer ' + self.access_token)
+        )
         self.assertEqual(res.status_code, 200)
         self.assertIn('tesla', str(res.data))
 

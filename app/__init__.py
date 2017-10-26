@@ -188,7 +188,19 @@ def create_app(config_name):
                         response.status_code = 201
                         return response
                 elif request.method == 'GET':
-                    pass
+                    items = Item.query.filter_by(bucketlist_id=id)
+                    results = []
+                    for item in items:
+                        obj = {
+                            'id': item.id,
+                            'name': item.name,
+                            'date_created': item.date_created,
+                            'bucketlist_id': id
+                        }
+                        results.append(obj)
+                    response = jsonify(results)
+                    response.status_code = 200
+                    return response
             else:
                 return {'Authentication': 'You are not authorized to access this page'}
         except Exception as e:
