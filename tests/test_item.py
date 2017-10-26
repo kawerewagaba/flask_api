@@ -73,11 +73,39 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization='Bearer ' + self.access_token),
             data=self.item
         )
-        self.assertEqual(res.status_code, 201)
         # then check if it exists
-        res = self.client().get('/bucketlists/{}/items/'.format(bucketlist_id), headers=dict(Authorization='Bearer ' + self.access_token))
+        res = self.client().get(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization='Bearer ' + self.access_token)
+        )
         self.assertEqual(res.status_code, 200)
         self.assertIn('tesla', str(res.data))
+
+    def test_edit_item_in_bucketlist(self):
+        """ test API can edit item in bucketlist """
+        result = self.create_bucketlist()
+        # we need to obtain bucketlist ID
+        bucketlist_id = json.loads(result.data.decode())['id']
+        # first add the item
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization='Bearer ' + self.access_token),
+            data=self.item
+        )
+        # edit item
+        item_id = json.loads(res.data.decode())['id']
+        res = self.client().put(
+            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            headers=dict(Authorization='Bearer ' + self.access_token),
+            data={'name': 'build a family house'}
+        )
+        # then check if it has changed
+        res = self.client().get(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization='Bearer ' + self.access_token)
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('house', str(res.data))
 
     def tearDown(self):
         """teardown all initialized variables."""
