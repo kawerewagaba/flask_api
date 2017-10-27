@@ -18,6 +18,28 @@ class UserTestCase(unittest.TestCase):
         with self.app.app_context():
             db.create_all()
 
+            # register a test user then log them in
+            self.register_user()
+            result = self.login_user()
+            # obtain the access token
+            self.access_token = json.loads(result.data.decode())['access_token']
+
+    def register_user(self, email='test@user.com', password='test_pass'):
+        # method helps us create a new user
+        user = {
+            'email': email,
+            'password': password
+        }
+        return self.client().post('/auth/register', data=user)
+
+    def login_user(self, email='test@user.com', password='test_pass'):
+        # methods helps login created user
+        user = {
+            'email': email,
+            'password': password
+        }
+        return self.client().post('/auth/login', data=user)
+
     def test_user_creation(self):
         """Test API can create a user (POST request) """
         response = self.client().post('/auth/register', data=self.user)
