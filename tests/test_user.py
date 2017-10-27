@@ -63,7 +63,16 @@ class UserTestCase(unittest.TestCase):
 
     def test_user_logout(self):
         """Test API can logout user"""
-        pass
+        # request to logout
+        response = self.client().post('/auth/logout')
+        self.assertEqual(json.loads(response.data)['message'], 'You logged out successfully')
+        self.assertEqual(response.status_code, 200)
+        # try to view bucketlists
+        response = self.client().get(
+            '/bucketlists/',
+            headers=dict(Authorization='Bearer ' + self.access_token)
+        )
+        self.assertEqual(response.status_code, 401)
 
     def test_user_reset_password(self):
         """Test API allows password reset"""
