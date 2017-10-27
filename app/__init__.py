@@ -104,10 +104,13 @@ def create_app(config_name):
                     # authentication failure
                     # user_id returns the output from the decode function
                     return {'Error': user_id}
+            else:
+                #user not legit
+                return {'Authentication', 'You are not authorized to access this page'}, 401
 
-        except:
-            # user is not legit
-            return {'Authentication': 'You are not authorized to access this page'}
+        except Exception as e:
+            # something went wrong on the server side
+            return {'Error': e}
 
     """edit, delete bucketlist"""
     @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
