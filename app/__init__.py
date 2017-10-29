@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
 import jwt
 
+# in memory store for revoked tokens
+revoked_tokens = []
+
 # initialize sql-alchemy
 """
 position of this import really matters
@@ -55,6 +58,19 @@ def create_app(config_name):
             }
             return response
 
+    """ logout user """
+    @app.route('/auth/logout', methods=['POST'])
+    def user_logout():
+        try:
+            #get the access token from the request
+            access_token = request.data.get('access_token')
+            if access_token:
+                revoked_tokens.append(access_token)
+                return {'message': 'You logged out successfully'}
+        except Exception as e:
+            # something went wrong on the server side
+            return {'Error': e}
+
     """create, and retrieve bucketlists"""
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
@@ -62,7 +78,7 @@ def create_app(config_name):
             # get the access token from the header
             auth_header = request.headers.get('Authorization')
             access_token = auth_header.split(" ")[1]
-            if access_token:
+            if access_token and access_token not in revoked_tokens:
                 # attempt to decode the token and get the user id
                 user_id = User.decode_token(access_token)
                 if not isinstance(user_id, str):
@@ -106,7 +122,7 @@ def create_app(config_name):
                     return {'Error': user_id}
             else:
                 #user not legit
-                return {'Authentication', 'You are not authorized to access this page'}, 401
+                return {'Authentication': 'You are not authorized to access this page'}, 401
 
         except Exception as e:
             # something went wrong on the server side
