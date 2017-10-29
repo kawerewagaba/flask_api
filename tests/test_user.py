@@ -3,7 +3,7 @@
 import unittest
 import json
 
-from app import create_app, db
+from app import create_app, db, revoked_tokens
 
 class UserTestCase(unittest.TestCase):
     """This class represents the user test case"""
@@ -64,9 +64,10 @@ class UserTestCase(unittest.TestCase):
     def test_user_logout(self):
         """Test API can logout user"""
         # request to logout
-        response = self.client().post('/auth/logout')
+        response = self.client().post('/auth/logout', data={'access_token': self.access_token})
         self.assertEqual(json.loads(response.data)['message'], 'You logged out successfully')
         self.assertEqual(response.status_code, 200)
+        self.assertIn(self.access_token, str(revoked_tokens))
         # try to view bucketlists
         response = self.client().get(
             '/bucketlists/',
