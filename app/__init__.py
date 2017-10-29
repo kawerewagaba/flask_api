@@ -190,6 +190,8 @@ def create_app(config_name):
                 else:
                     # authentication failure
                     return {'Error': user_id}
+            else:
+                return {'Authentication': 'You are not authorized to access this page'}, 401
         except:
             # user is not legit
             return {'Authentication': 'You are not authorized to access this page'}
@@ -230,7 +232,7 @@ def create_app(config_name):
                     response.status_code = 200
                     return response
             else:
-                return {'Authentication': 'You are not authorized to access this page'}
+                return {'Authentication': 'You are not authorized to access this page'}, 401
         except Exception as e:
             return {'Error': e}
 
@@ -275,7 +277,7 @@ def create_app(config_name):
                         response.status_code = 200
                         return response
             else:
-                return {'Authentication': 'You are not authorized to access this page'}
+                return {'Authentication': 'You are not authorized to access this page'}, 401
         except Exception as e:
             return {'Error': e}
 

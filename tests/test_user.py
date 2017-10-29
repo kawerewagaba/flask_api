@@ -74,6 +74,26 @@ class UserTestCase(unittest.TestCase):
             headers=dict(Authorization='Bearer ' + self.access_token)
         )
         self.assertEqual(response.status_code, 401)
+        # try to edit bucketlist
+        response = self.client().put(
+            '/bucketlists/1',
+            headers=dict(Authorization='Bearer ' + self.access_token),
+            data={"name": "Lifestyle goals"}
+        )
+        self.assertEqual(response.status_code, 401)
+        # try to view items in bucketlist
+        response = self.client().get(
+            '/bucketlists/1/items/',
+            headers=dict(Authorization='Bearer ' + self.access_token)
+        )
+        self.assertEqual(response.status_code, 401)
+        # try to edit item in bucketlist
+        response = self.client().put(
+            '/bucketlists/1/items/1',
+            headers=dict(Authorization='Bearer ' + self.access_token),
+            data={'name': 'build a family house'}
+        )
+        self.assertEqual(response.status_code, 401)
 
     def test_user_reset_password(self):
         """Test API allows password reset"""
