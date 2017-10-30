@@ -2,6 +2,7 @@ from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
 import jwt
+from flask_bcrypt import Bcrypt
 
 # in memory store for revoked tokens
 revoked_tokens = []
@@ -49,13 +50,13 @@ def create_app(config_name):
                 response = {
                     'message': 'You logged in successfully',
                     'access_token': access_token.decode()
-                }
+                }, 200
                 return response
         else:
             # user does not exists
             response = {
                 'message': 'Verify credentials and try again'
-            }
+            }, 401
             return response
 
     """ logout user """
@@ -67,6 +68,31 @@ def create_app(config_name):
             if access_token:
                 revoked_tokens.append(access_token)
                 return {'message': 'You logged out successfully'}
+        except Exception as e:
+            # something went wrong on the server side
+            return {'Error': e}
+
+    """ reset password """
+    @app.route('/auth/reset-password', methods=['POST'])
+    def reset_password():
+        try:
+            access_token = request.data.get('access_token')
+            access_token = access_token.split(" ")[1]
+            if access_token:
+                user_id = User.decode_token(access_token)
+                if not isinstance(user_id, str):
+                    new_pass = request.data.get('password')
+                    if new_pass:
+                        user = User.query.filter_by(id=user_id).first()
+                        if user:
+                            # hash new password
+                            user.password = Bcrypt().generate_password_hash(password=new_pass).decode()
+                            user.save()
+                            return {'message': 'Password reset successfully'}, 200
+            else:
+                #user not legit
+                return {'Authentication': 'You are not authorized to access this page'}, 401
+
         except Exception as e:
             # something went wrong on the server side
             return {'Error': e}
