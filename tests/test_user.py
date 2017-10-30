@@ -97,7 +97,28 @@ class UserTestCase(unittest.TestCase):
 
     def test_user_reset_password(self):
         """Test API allows password reset"""
-        pass
+        response = self.client().post(
+            '/auth/reset-password',
+            data={
+                'access_token': 'Bearer ' + self.access_token,
+                'password': 'new_pass'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('reset', str(response.data))
+        # try login with previous password. it should fail
+        login_response = self.client().post('/auth/login', data=self.user)
+        self.assertIn('Verify credentials and try again', str(login_response.data))
+        self.assertEqual(login_response.status_code, 401)
+        # try login with new password. it should pass
+        login_response = self.client().post('/auth/login',
+            data={
+                'email': 'test@user.com',
+                'password': 'new_pass'
+            }
+        )
+        self.assertIn('You logged in successfully', str(login_response.data))
+        self.assertEqual(login_response.status_code, 200)
 
     def tearDown(self):
         """ teardown all initialized variables """
