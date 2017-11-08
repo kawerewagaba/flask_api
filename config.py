@@ -4,7 +4,6 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET = 'p9Bv<3Eid9%$i01'
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/bucketlist'
-    ITEMS_PER_PAGE = 5; # Value to be used for pagination
 
 class DevelopmentConfig(Config):
     """Configurations for Development."""
