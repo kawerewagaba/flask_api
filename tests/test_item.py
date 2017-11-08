@@ -45,7 +45,7 @@ class ItemTestCase(unittest.TestCase):
         }
         return self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data=bucketlist
         )
 
@@ -56,7 +56,7 @@ class ItemTestCase(unittest.TestCase):
         bucketlist_id = json.loads(result.data.decode())['id']
         res = self.client().post(
             '/bucketlists/{}/items/'.format(bucketlist_id),
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data=self.item
         )
         self.assertEqual(res.status_code, 201)
@@ -70,13 +70,13 @@ class ItemTestCase(unittest.TestCase):
         # first add the item
         res = self.client().post(
             '/bucketlists/{}/items/'.format(bucketlist_id),
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data=self.item
         )
         # then check if it exists
         res = self.client().get(
             '/bucketlists/{}/items/'.format(bucketlist_id),
-            headers=dict(Authorization='Bearer ' + self.access_token)
+            headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(res.status_code, 200)
         self.assertIn('tesla', str(res.data))
@@ -89,20 +89,20 @@ class ItemTestCase(unittest.TestCase):
         # first add the item
         res = self.client().post(
             '/bucketlists/{}/items/'.format(bucketlist_id),
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data=self.item
         )
         # edit item
         item_id = json.loads(res.data.decode())['id']
         res = self.client().put(
             '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
         # then check if it has changed
         res = self.client().get(
             '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
-            headers=dict(Authorization='Bearer ' + self.access_token)
+            headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(res.status_code, 200)
         self.assertIn('house', str(res.data))
