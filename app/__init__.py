@@ -265,38 +265,47 @@ def create_app(config_name):
             # get the access token from the header
             access_token = request.headers.get('Authorization')
             if access_token and access_token not in revoked_tokens:
-                item = Item.query.filter_by(id=item_id).first()
-                if not item:
-                    return {'message': 'No item with id {}'.format(item_id)}, 404
-                else:
-                    if request.method == 'PUT':
-                        # edit item
-                        name = str(request.data.get('name'))
-                        if name:
-                            item.name = name
-                            item.save()
+                # attempt to decode the token and get the user id
+                user_id = User.decode_token(access_token)
+                if not isinstance(user_id, str):
+                    # returned ID is an int
+                    # go ahead and handle the request, user is authenticated
+                    item = Item.query.filter_by(id=item_id).first()
+                    if not item:
+                        return {'message': 'No item with id {}'.format(item_id)}, 404
+                    else:
+                        if request.method == 'PUT':
+                            # edit item
+                            name = str(request.data.get('name'))
+                            if name:
+                                item.name = name
+                                item.save()
+                                response = jsonify({
+                                    'id': item.id,
+                                    'name': item.name,
+                                    'date_created': item.date_created,
+                                    'bucketlist_id': bucketlist_id
+                                })
+                                response.status_code = 201
+                                return response
+                        elif request.method == 'DELETE':
+                            # delete item
+                            item.delete()
+                            return {'message': 'Item with id {} has been deleted.'.format(item_id)}, 200
+                        else:
+                            # get item by ID
                             response = jsonify({
                                 'id': item.id,
                                 'name': item.name,
                                 'date_created': item.date_created,
                                 'bucketlist_id': bucketlist_id
                             })
-                            response.status_code = 201
+                            response.status_code = 200
                             return response
-                    elif request.method == 'DELETE':
-                        # delete item
-                        item.delete()
-                        return {'message': 'Item with id {} has been deleted.'.format(item_id)}, 200
-                    else:
-                        # get item by ID
-                        response = jsonify({
-                            'id': item.id,
-                            'name': item.name,
-                            'date_created': item.date_created,
-                            'bucketlist_id': bucketlist_id
-                        })
-                        response.status_code = 200
-                        return response
+                else:
+                    # authentication failure
+                    # user_id returns the output from the decode function
+                    return {'Error': user_id}
             else:
                 return {'Authentication': 'You are not authorized to access this page'}, 401
         except Exception as e:
