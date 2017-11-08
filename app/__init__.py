@@ -148,15 +148,6 @@ def create_app(config_name):
                 #user not legit
                 return {'Authentication': 'You are not authorized to access this page'}, 401
 
-                """
-                Left this comment on purpose - reference purposes (or just to whine over my frustrations).
-                It took me three days to debug.
-                Apparently, mistakenly writing a comma between the key and value pair
-                of a dict, instead of a colon, throws a
-                => TypeError: 'set' object is not callable
-                #{'Authentication', 'You are not authorized to access this page'}
-                """
-
         except Exception as e:
             # something went wrong on the server side
             return {'Error': e}
