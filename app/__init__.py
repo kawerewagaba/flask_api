@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 
 # in memory store for revoked tokens
 revoked_tokens = []
+items_per_page = 5; # Value to be used for pagination
 
 # initialize sql-alchemy
 """
