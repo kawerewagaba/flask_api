@@ -217,33 +217,42 @@ def create_app(config_name):
             # get the access token from the header
             access_token = request.headers.get('Authorization')
             if access_token and access_token not in revoked_tokens:
-                if request.method == 'POST':
-                    name = str(request.data.get('name'))
-                    if name:
-                        item = Item(name=name, bucketlist_id=id)
-                        item.save()
-                        response = jsonify({
-                            'id': item.id,
-                            'name': item.name,
-                            'date_created': item.date_created,
-                            'bucketlist_id': id
-                        })
-                        response.status_code = 201
+                # attempt to decode the token and get the user id
+                user_id = User.decode_token(access_token)
+                if not isinstance(user_id, str):
+                    # returned ID is an int
+                    # go ahead and handle the request, user is authenticated
+                    if request.method == 'POST':
+                        name = str(request.data.get('name'))
+                        if name:
+                            item = Item(name=name, bucketlist_id=id)
+                            item.save()
+                            response = jsonify({
+                                'id': item.id,
+                                'name': item.name,
+                                'date_created': item.date_created,
+                                'bucketlist_id': id
+                            })
+                            response.status_code = 201
+                            return response
+                    elif request.method == 'GET':
+                        items = Item.query.filter_by(bucketlist_id=id)
+                        results = []
+                        for item in items:
+                            obj = {
+                                'id': item.id,
+                                'name': item.name,
+                                'date_created': item.date_created,
+                                'bucketlist_id': id
+                            }
+                            results.append(obj)
+                        response = jsonify(results)
+                        response.status_code = 200
                         return response
-                elif request.method == 'GET':
-                    items = Item.query.filter_by(bucketlist_id=id)
-                    results = []
-                    for item in items:
-                        obj = {
-                            'id': item.id,
-                            'name': item.name,
-                            'date_created': item.date_created,
-                            'bucketlist_id': id
-                        }
-                        results.append(obj)
-                    response = jsonify(results)
-                    response.status_code = 200
-                    return response
+                else:
+                    # authentication failure
+                    # user_id returns the output from the decode function
+                    return {'Error': user_id}
             else:
                 return {'Authentication': 'You are not authorized to access this page'}, 401
         except Exception as e:
