@@ -87,6 +87,7 @@ def create_app(config_name):
                             # hash new password
                             user.password = Bcrypt().generate_password_hash(password=new_pass).decode()
                             user.save()
+                            revoked_tokens.append(access_token)
                             return {'message': 'Password reset successfully'}, 200
             else:
                 #user not legit

@@ -120,6 +120,14 @@ class UserTestCase(unittest.TestCase):
         self.assertIn('You logged in successfully', str(login_response.data))
         self.assertEqual(login_response.status_code, 200)
 
+        """ test resource access after password reset. It shoud fail. """
+        # try to view bucketlists
+        response = self.client().get(
+            '/bucketlists/',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 401)
+
     def tearDown(self):
         """ teardown all initialized variables """
         with self.app.app_context():
