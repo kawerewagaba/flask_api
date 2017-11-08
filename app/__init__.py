@@ -77,7 +77,6 @@ def create_app(config_name):
     def reset_password():
         try:
             access_token = request.data.get('access_token')
-            access_token = access_token.split(" ")[1]
             if access_token:
                 user_id = User.decode_token(access_token)
                 if not isinstance(user_id, str):
@@ -102,8 +101,7 @@ def create_app(config_name):
     def bucketlists():
         try:
             # get the access token from the header
-            auth_header = request.headers.get('Authorization')
-            access_token = auth_header.split(" ")[1]
+            access_token = request.headers.get('Authorization')
             if access_token and access_token not in revoked_tokens:
                 # attempt to decode the token and get the user id
                 user_id = User.decode_token(access_token)
@@ -168,8 +166,7 @@ def create_app(config_name):
     def bucketlist_manipulation(id, **kwargs):
         try:
             # get the access token from the header
-            auth_header = request.headers.get('Authorization')
-            access_token = auth_header.split(" ")[1]
+            access_token = request.headers.get('Authorization')
             if access_token and access_token not in revoked_tokens:
                 # attempt to decode the token and get the user id
                 user_id = User.decode_token(access_token)
@@ -227,8 +224,7 @@ def create_app(config_name):
     def add_item(id):
         try:
             # get the access token from the header
-            auth_header = request.headers.get('Authorization')
-            access_token = auth_header.split(" ")[1]
+            access_token = request.headers.get('Authorization')
             if access_token and access_token not in revoked_tokens:
                 if request.method == 'POST':
                     name = str(request.data.get('name'))
@@ -267,8 +263,7 @@ def create_app(config_name):
     def item_edit_or_delete(bucketlist_id, item_id):
         try:
             # get the access token from the header
-            auth_header = request.headers.get('Authorization')
-            access_token = auth_header.split(" ")[1]
+            access_token = request.headers.get('Authorization')
             if access_token and access_token not in revoked_tokens:
                 item = Item.query.filter_by(id=item_id).first()
                 if not item:
