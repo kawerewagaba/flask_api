@@ -71,26 +71,26 @@ class UserTestCase(unittest.TestCase):
         # try to view bucketlists
         response = self.client().get(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + self.access_token)
+            headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 401)
         # try to edit bucketlist
         response = self.client().put(
             '/bucketlists/1',
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data={"name": "Lifestyle goals"}
         )
         self.assertEqual(response.status_code, 401)
         # try to view items in bucketlist
         response = self.client().get(
             '/bucketlists/1/items/',
-            headers=dict(Authorization='Bearer ' + self.access_token)
+            headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 401)
         # try to edit item in bucketlist
         response = self.client().put(
             '/bucketlists/1/items/1',
-            headers=dict(Authorization='Bearer ' + self.access_token),
+            headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
         self.assertEqual(response.status_code, 401)
@@ -100,7 +100,7 @@ class UserTestCase(unittest.TestCase):
         response = self.client().post(
             '/auth/reset-password',
             data={
-                'access_token': 'Bearer ' + self.access_token,
+                'access_token': self.access_token,
                 'password': 'new_pass'
             }
         )

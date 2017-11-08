@@ -42,7 +42,7 @@ class BucketlistTestCase(unittest.TestCase):
         # ensure the request has an authorization header set with the access token in it.
         res = self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization=access_token),
             data=self.bucketlist
         )
         self.assertEqual(res.status_code, 201)
@@ -58,13 +58,13 @@ class BucketlistTestCase(unittest.TestCase):
         # ensure the request has an authorization header set with the access token in it.
         res = self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization=access_token),
             data=self.bucketlist
         )
         self.assertEqual(res.status_code, 201)
         res = self.client().get(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token)
+            headers=dict(Authorization=access_token)
         )
         self.assertEqual(res.status_code, 200)
         self.assertIn('Career', str(res.data))
@@ -79,14 +79,14 @@ class BucketlistTestCase(unittest.TestCase):
         # ensure the request has an authorization header set with the access token in it.
         rv = self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization=access_token),
             data=self.bucketlist
         )
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
             '/bucketlists/{}'.format(result_in_json['id']),
-            headers=dict(Authorization='Bearer ' + access_token)
+            headers=dict(Authorization=access_token)
         )
         self.assertEqual(result.status_code, 200)
         self.assertIn('Career', str(result.data))
@@ -101,13 +101,13 @@ class BucketlistTestCase(unittest.TestCase):
         # ensure the request has an authorization header set with the access token in it.
         rv = self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization=access_token),
             data={'name': 'Lifestyle'}
         )
         self.assertEqual(rv.status_code, 201)
         rv = self.client().put(
             '/bucketlists/1',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization=access_token),
             data={
                 "name": "Lifestyle goals"
             }
@@ -115,7 +115,7 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         results = self.client().get(
             '/bucketlists/1',
-            headers=dict(Authorization='Bearer ' + access_token)
+            headers=dict(Authorization=access_token)
         )
         self.assertIn('goals', str(results.data))
 
@@ -129,19 +129,19 @@ class BucketlistTestCase(unittest.TestCase):
         # ensure the request has an authorization header set with the access token in it.
         rv = self.client().post(
             '/bucketlists/',
-            headers=dict(Authorization='Bearer ' + access_token),
+            headers=dict(Authorization=access_token),
             data={'name': 'Crazy goals'}
         )
         self.assertEqual(rv.status_code, 201)
         res = self.client().delete(
             '/bucketlists/1',
-            headers=dict(Authorization='Bearer ' + access_token)
+            headers=dict(Authorization=access_token)
         )
         self.assertEqual(res.status_code, 200)
         # Test to see if it exists, should return a 404
         result = self.client().get(
             '/bucketlists/1',
-            headers=dict(Authorization='Bearer ' + access_token)
+            headers=dict(Authorization=access_token)
         )
         self.assertEqual(result.status_code, 404)
 
