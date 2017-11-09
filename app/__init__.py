@@ -254,7 +254,11 @@ def create_app(config_name):
                                 'bucketlist_id': id
                             }
                             results.append(obj)
-                        response = jsonify(results)
+                        all_results = {
+                            'bucketlists_on_page': results,
+                            'number_of_bucketlist_items_on_page': len(results)
+                        }
+                        response = jsonify(all_results)
                         response.status_code = 200
                         return response
                 else:

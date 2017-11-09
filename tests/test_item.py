@@ -107,6 +107,49 @@ class ItemTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn('house', str(res.data))
 
+    """ Testing pagination """
+    def test_bukcetlist_item_pagination(self):
+        result = self.create_bucketlist()
+        # we need to obtain bucketlist ID
+        bucketlist_id = json.loads(result.data.decode())['id']
+        # we create some bucketlists first
+        item_names = ['one', 'two', 'three', 'four', 'five', 'six']
+        for i in item_names:
+            response = self.client().post(
+                '/bucketlists/{}/items/'.format(bucketlist_id),
+                headers=dict(Authorization=self.access_token),
+                data={'name': i}
+            )
+            self.assertEqual(response.status_code, 201)
+            self.assertIn(i, str(response.data))
+        # then test pagination
+        # it should return five items for the first page
+        response = self.client().get(
+            '/bucketlists/{}/items/?page=1'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlist_items_on_page'], 5)
+        self.assertIn('one', str(response.data))
+        self.assertIn('two', str(response.data))
+        self.assertIn('three', str(response.data))
+        self.assertIn('four', str(response.data))
+        self.assertIn('five', str(response.data))
+        self.assertNotIn('six', str(response.data))
+        # and one for the next page
+        response = self.client().get(
+            '/bucketlists/{}/items/?page=2'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlist_items_on_page'], 1)
+        self.assertIn('six', str(response.data))
+        self.assertNotIn('one', str(response.data))
+        self.assertNotIn('two', str(response.data))
+        self.assertNotIn('three', str(response.data))
+        self.assertNotIn('four', str(response.data))
+        self.assertNotIn('five', str(response.data))
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():
