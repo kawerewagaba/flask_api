@@ -127,7 +127,9 @@ def create_app(config_name):
                             return response
                     else:
                         # GET all bucketlists
-                        bucketlists = Bucketlist.query.filter_by(user_id=user_id)
+                        # get page, or use 1 as the default
+                        page = request.args.get('page', 1, type=int)
+                        bucketlists = Bucketlist.query.filter_by(user_id=user_id).paginate(page, items_per_page, False).items
                         results = []
 
                         for bucketlist in bucketlists:
@@ -139,7 +141,11 @@ def create_app(config_name):
                                 'created_by': user_id
                             }
                             results.append(obj)
-                        response = jsonify(results)
+                        all_results = {
+                            'bucketlists_on_page': results,
+                            'number_of_bucketlists_on_page': len(results)
+                        }
+                        response = jsonify(all_results)
                         response.status_code = 200
                         return response
                 else:
