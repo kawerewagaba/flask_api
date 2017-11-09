@@ -129,6 +129,7 @@ def create_app(config_name):
                         # GET all bucketlists
                         # get page, or use 1 as the default
                         page = request.args.get('page', 1, type=int)
+                        # get search term
                         search_query = request.args.get('q')
                         if search_query:
                             # convert term to lower case
@@ -252,7 +253,14 @@ def create_app(config_name):
                     elif request.method == 'GET':
                         # get page, or use 1 as the default
                         page = request.args.get('page', 1, type=int)
-                        items = Item.query.filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
+                        # get search term
+                        search_query = request.args.get('q')
+                        if search_query:
+                            # convert term to lower case
+                            search_query = search_query.lower()
+                            items = Item.query.filter(Item.name.like('%' + search_query + '%')).filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
+                        else:
+                            items = Item.query.filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
                         results = []
                         for item in items:
                             obj = {
@@ -263,7 +271,7 @@ def create_app(config_name):
                             }
                             results.append(obj)
                         all_results = {
-                            'bucketlists_on_page': results,
+                            'bucketlist_items_on_page': results,
                             'number_of_bucketlist_items_on_page': len(results)
                         }
                         response = jsonify(all_results)

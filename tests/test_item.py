@@ -107,12 +107,12 @@ class ItemTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn('house', str(res.data))
 
-    """ Testing pagination """
     def test_bukcetlist_item_pagination(self):
+        """ Testing item pagination """
         result = self.create_bucketlist()
         # we need to obtain bucketlist ID
         bucketlist_id = json.loads(result.data.decode())['id']
-        # we create some bucketlists first
+        # we create some items first
         item_names = ['one', 'two', 'three', 'four', 'five', 'six']
         for i in item_names:
             response = self.client().post(
@@ -149,6 +149,45 @@ class ItemTestCase(unittest.TestCase):
         self.assertNotIn('three', str(response.data))
         self.assertNotIn('four', str(response.data))
         self.assertNotIn('five', str(response.data))
+
+    def test_bukcetlist_item_search(self):
+        """ Testing item search """
+        result = self.create_bucketlist()
+        # we need to obtain bucketlist ID
+        bucketlist_id = json.loads(result.data.decode())['id']
+        # first add two test items
+        item_names = ['search_one', 'search_two']
+        for i in item_names:
+            rv = self.client().post(
+                '/bucketlists/{}/items/'.format(bucketlist_id),
+                headers=dict(Authorization=self.access_token),
+                data={'name': i}
+            )
+            self.assertEqual(rv.status_code, 201)
+            self.assertIn(i, str(rv.data))
+        # test search with query string: one
+        rv = self.client().get(
+            '/bucketlists/{}/items/?q=one'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_one', str(rv.data))
+        self.assertNotIn('search_two', str(rv.data))
+        # test search with query string: one - AnYcAsE
+        rv = self.client().get(
+            '/bucketlists/{}/items/?q=OnE'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_one', str(rv.data))
+        # test search with query string: two
+        rv = self.client().get(
+            '/bucketlists/{}/items/?q=two'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_two', str(rv.data))
+        self.assertNotIn('search_one', str(rv.data))
 
     def tearDown(self):
         """teardown all initialized variables."""
