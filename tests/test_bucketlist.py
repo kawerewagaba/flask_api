@@ -121,8 +121,8 @@ class BucketlistTestCase(unittest.TestCase):
         )
         self.assertEqual(result.status_code, 404)
 
-    """ Testing pagination """
     def test_bukcetlist_pagination(self):
+        """ Testing pagination """
         # we create some bucketlists first
         bucketlist_names = ['one', 'two', 'three', 'four', 'five', 'six']
         for i in bucketlist_names:
@@ -160,6 +160,42 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertNotIn('three', str(response.data))
         self.assertNotIn('four', str(response.data))
         self.assertNotIn('five', str(response.data))
+
+    def test_bucketlist_search(self):
+        """ Test bucketlist search """
+        # first add two test bucketlists
+        bucketlist_names = ['search_one', 'search_two']
+        for i in bucketlist_names:
+            rv = self.client().post(
+                '/bucketlists/',
+                headers=dict(Authorization=self.access_token),
+                data={'name': i}
+            )
+            self.assertEqual(rv.status_code, 201)
+            self.assertIn(i, str(rv.data))
+        # test search with query string: one
+        rv = self.client().get(
+            '/bucketlists/?q=one',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_one', str(rv.data))
+        self.assertNotIn('search_two', str(rv.data))
+        # test search with query string: one - AnYcAsE
+        rv = self.client().get(
+            '/bucketlists/?q=OnE',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_one', str(rv.data))
+        # test search with query string: two
+        rv = self.client().get(
+            '/bucketlists/?q=two',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_two', str(rv.data))
+        self.assertNotIn('search_one', str(rv.data))
 
     def tearDown(self):
         """teardown all initialized variables."""
