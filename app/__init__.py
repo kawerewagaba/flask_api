@@ -244,7 +244,9 @@ def create_app(config_name):
                             response.status_code = 201
                             return response
                     elif request.method == 'GET':
-                        items = Item.query.filter_by(bucketlist_id=id)
+                        # get page, or use 1 as the default
+                        page = request.args.get('page', 1, type=int)
+                        items = Item.query.filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
                         results = []
                         for item in items:
                             obj = {
