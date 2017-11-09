@@ -9,7 +9,7 @@ class BucketlistTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
-        self.bucketlist = {'name': 'Career goals'}
+        self.bucketlist = {'name': 'career goals'}
 
         # binds the app to the current context
         with self.app.app_context():
@@ -46,7 +46,7 @@ class BucketlistTestCase(unittest.TestCase):
             data=self.bucketlist
         )
         self.assertEqual(res.status_code, 201)
-        self.assertIn('Career', str(res.data))
+        self.assertIn('career', str(res.data))
 
     def test_api_can_get_all_bucketlists(self):
         """Test API can get a bucketlist (GET request)."""
@@ -61,7 +61,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(res.status_code, 200)
-        self.assertIn('Career', str(res.data))
+        self.assertIn('career', str(res.data))
 
     def test_api_can_get_bucketlist_by_id(self):
         """Test API can get a single bucketlist by using it's id."""
@@ -77,7 +77,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(result.status_code, 200)
-        self.assertIn('Career', str(result.data))
+        self.assertIn('career', str(result.data))
 
     def test_bucketlist_can_be_edited(self):
         """Test API can edit an existing bucketlist. (PUT request)"""
