@@ -133,6 +133,33 @@ class BucketlistTestCase(unittest.TestCase):
             )
             self.assertEqual(response.status_code, 201)
             self.assertIn(i, str(response.data))
+        # then test pagination
+        # it should return five items for the first page
+        response = self.client().get(
+            '/bucketlists/?page=1',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlists_on_page'], 5)
+        self.assertIn('one', str(response.data))
+        self.assertIn('two', str(response.data))
+        self.assertIn('three', str(response.data))
+        self.assertIn('four', str(response.data))
+        self.assertIn('five', str(response.data))
+        self.assertNotIn('six', str(response.data))
+        # and one for the next page
+        response = self.client().get(
+            '/bucketlists/?page=2',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlists_on_page'], 1)
+        self.assertIn('six', str(response.data))
+        self.assertNotIn('one', str(response.data))
+        self.assertNotIn('two', str(response.data))
+        self.assertNotIn('three', str(response.data))
+        self.assertNotIn('four', str(response.data))
+        self.assertNotIn('five', str(response.data))
 
     def tearDown(self):
         """teardown all initialized variables."""
