@@ -129,7 +129,11 @@ def create_app(config_name):
                         # GET all bucketlists
                         # get page, or use 1 as the default
                         page = request.args.get('page', 1, type=int)
-                        bucketlists = Bucketlist.query.filter_by(user_id=user_id).paginate(page, items_per_page, False).items
+                        search_query = request.args.get('q')
+                        if search_query:
+                            bucketlists = Bucketlist.query.filter(Bucketlist.name.like('%' + search_query + '%')).filter_by(user_id=user_id).paginate(page, items_per_page, False).items
+                        else:
+                            bucketlists = Bucketlist.query.filter_by(user_id=user_id).paginate(page, items_per_page, False).items
                         results = []
 
                         for bucketlist in bucketlists:
