@@ -244,7 +244,9 @@ def create_app(config_name):
                             response.status_code = 201
                             return response
                     elif request.method == 'GET':
-                        items = Item.query.filter_by(bucketlist_id=id)
+                        # get page, or use 1 as the default
+                        page = request.args.get('page', 1, type=int)
+                        items = Item.query.filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
                         results = []
                         for item in items:
                             obj = {
@@ -254,7 +256,11 @@ def create_app(config_name):
                                 'bucketlist_id': id
                             }
                             results.append(obj)
-                        response = jsonify(results)
+                        all_results = {
+                            'bucketlists_on_page': results,
+                            'number_of_bucketlist_items_on_page': len(results)
+                        }
+                        response = jsonify(all_results)
                         response.status_code = 200
                         return response
                 else:
