@@ -163,6 +163,7 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_bucketlist_search(self):
         """ Test bucketlist search """
+        # first add two test bucketlists
         bucketlist_names = ['search_one', 'search_two']
         for i in bucketlist_names:
             rv = self.client().post(
@@ -180,6 +181,13 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         self.assertIn('search_one', str(rv.data))
         self.assertNotIn('search_two', str(rv.data))
+        # test search with query string: one - AnYcAsE
+        rv = self.client().get(
+            '/bucketlists/?q=OnE',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('search_one', str(rv.data))
         # test search with query string: two
         rv = self.client().get(
             '/bucketlists/?q=two',
