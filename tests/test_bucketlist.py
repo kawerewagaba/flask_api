@@ -122,7 +122,7 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 404)
 
     def test_bukcetlist_pagination(self):
-        """ Testing pagination """
+        """ Testing bucketlist pagination """
         # we create some bucketlists first
         bucketlist_names = ['one', 'two', 'three', 'four', 'five', 'six']
         for i in bucketlist_names:
