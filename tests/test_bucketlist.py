@@ -121,6 +121,19 @@ class BucketlistTestCase(unittest.TestCase):
         )
         self.assertEqual(result.status_code, 404)
 
+    """ Testing pagination """
+    def test_bukcetlist_pagination(self):
+        # we create some bucketlists first
+        bucketlist_names = ['one', 'two', 'three', 'four', 'five', 'six']
+        for i in bucketlist_names:
+            response = self.client().post(
+                '/bucketlists/',
+                headers=dict(Authorization=self.access_token),
+                data={'name': i}
+            )
+            self.assertEqual(response.status_code, 201)
+            self.assertIn(i, str(response.data))
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():
