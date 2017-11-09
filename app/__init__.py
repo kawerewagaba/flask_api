@@ -113,8 +113,6 @@ def create_app(config_name):
                     if request.method == "POST":
                         # create bucketlists
                         name = str(request.data.get('name', ''))
-                        # saving bucketlists in lowercase
-                        name = name.lower()
                         if name:
                             bucketlist = Bucketlist(name=name, user_id=user_id)
                             bucketlist.save()
@@ -196,8 +194,6 @@ def create_app(config_name):
                     elif request.method == 'PUT':
                         # edit bucketlist
                         name = str(request.data.get('name', ''))
-                        # saving bucketlists in lowercase
-                        name = name.lower()
                         bucketlist.name = name
                         bucketlist.save()
                         response = jsonify({
@@ -243,8 +239,6 @@ def create_app(config_name):
                     # go ahead and handle the request, user is authenticated
                     if request.method == 'POST':
                         name = str(request.data.get('name'))
-                        # saving item in lowercase
-                        name = name.lower()
                         if name:
                             item = Item(name=name, bucketlist_id=id)
                             item.save()
@@ -311,8 +305,6 @@ def create_app(config_name):
                         if request.method == 'PUT':
                             # edit item
                             name = str(request.data.get('name'))
-                            # saving item in lowercase
-                            name = name.lower()
                             if name:
                                 item.name = name
                                 item.save()
