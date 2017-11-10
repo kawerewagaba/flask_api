@@ -1,3 +1,5 @@
+import os
+
 class Config(object):
     """Parent configuration class."""
     DEBUG = False
@@ -24,7 +26,7 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     # heroku database url
-    SQLALCHEMY_DATABASE_URI = 'postgres://unambjfcrmrwxo:359619804ae18263ba9b774a9b78f2884009e216d7bf85f2f22d886ceedae60f@ec2-54-163-255-181.compute-1.amazonaws.com:5432/da0o373vrokhjc'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 app_config = {
     'development': DevelopmentConfig,
