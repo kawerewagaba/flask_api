@@ -125,7 +125,7 @@ class ItemTestCase(unittest.TestCase):
         # then test pagination
         # it should return five items for the first page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=1'.format(bucketlist_id),
+            '/bucketlists/{}/items/?page=1&limit=5'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -138,7 +138,7 @@ class ItemTestCase(unittest.TestCase):
         self.assertNotIn('six', str(response.data))
         # and one for the next page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=2'.format(bucketlist_id),
+            '/bucketlists/{}/items/?page=2&limit=5'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
