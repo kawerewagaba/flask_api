@@ -161,6 +161,62 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertNotIn('four', str(response.data))
         self.assertNotIn('five', str(response.data))
 
+        # test limit two
+        # it should return two items for the first page
+        response = self.client().get(
+            '/bucketlists/?page=1&limit=2',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlists_on_page'], 2)
+        self.assertIn('one', str(response.data))
+        self.assertIn('two', str(response.data))
+        self.assertNotIn('three', str(response.data))
+        self.assertNotIn('four', str(response.data))
+        self.assertNotIn('five', str(response.data))
+        self.assertNotIn('six', str(response.data))
+        # it should return two items for the second page
+        response = self.client().get(
+            '/bucketlists/?page=2&limit=2',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlists_on_page'], 2)
+        self.assertIn('three', str(response.data))
+        self.assertIn('four', str(response.data))
+        self.assertNotIn('one', str(response.data))
+        self.assertNotIn('two', str(response.data))
+        self.assertNotIn('five', str(response.data))
+        self.assertNotIn('six', str(response.data))
+        # it should return two items for the third page
+        response = self.client().get(
+            '/bucketlists/?page=3&limit=2',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlists_on_page'], 2)
+        self.assertIn('five', str(response.data))
+        self.assertIn('six', str(response.data))
+        self.assertNotIn('three', str(response.data))
+        self.assertNotIn('four', str(response.data))
+        self.assertNotIn('one', str(response.data))
+        self.assertNotIn('two', str(response.data))
+
+        # test limit zero
+        # it should return no items for the all pages
+        response = self.client().get(
+            '/bucketlists/?page=1&limit=0',
+            headers=dict(Authorization=self.access_token)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data)['number_of_bucketlists_on_page'], 0)
+        self.assertNotIn('one', str(response.data))
+        self.assertNotIn('two', str(response.data))
+        self.assertNotIn('three', str(response.data))
+        self.assertNotIn('four', str(response.data))
+        self.assertNotIn('five', str(response.data))
+        self.assertNotIn('six', str(response.data))
+
     def test_bucketlist_search(self):
         """ Test bucketlist search """
         # first add two test bucketlists
