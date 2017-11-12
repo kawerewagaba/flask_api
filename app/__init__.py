@@ -6,7 +6,6 @@ from flask_bcrypt import Bcrypt
 
 # in memory store for revoked tokens
 revoked_tokens = []
-items_per_page = 5; # Value to be used for pagination
 
 # initialize sql-alchemy
 """
@@ -131,14 +130,16 @@ def create_app(config_name):
                         # GET all bucketlists
                         # get page, or use 1 as the default
                         page = request.args.get('page', 1, type=int)
+                        # get value to be used for pagination
+                        limit = request.args.get('limit', type=int) # you gotta stress the type
                         # get search term
                         search_query = request.args.get('q')
                         if search_query:
                             # convert term to lower case
                             search_query = search_query.lower()
-                            bucketlists = Bucketlist.query.filter(Bucketlist.name.like('%' + search_query + '%')).filter_by(user_id=user_id).paginate(page, items_per_page, False).items
+                            bucketlists = Bucketlist.query.filter(Bucketlist.name.like('%' + search_query + '%')).filter_by(user_id=user_id).paginate(page, limit, False).items
                         else:
-                            bucketlists = Bucketlist.query.filter_by(user_id=user_id).paginate(page, items_per_page, False).items
+                            bucketlists = Bucketlist.query.filter_by(user_id=user_id).paginate(page, limit, False).items
                         results = []
 
                         for bucketlist in bucketlists:
@@ -259,14 +260,16 @@ def create_app(config_name):
                     elif request.method == 'GET':
                         # get page, or use 1 as the default
                         page = request.args.get('page', 1, type=int)
+                        # get value to be used for pagination
+                        limit = request.args.get('limit', type=int)
                         # get search term
                         search_query = request.args.get('q')
                         if search_query:
                             # convert term to lower case
                             search_query = search_query.lower()
-                            items = Item.query.filter(Item.name.like('%' + search_query + '%')).filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
+                            items = Item.query.filter(Item.name.like('%' + search_query + '%')).filter_by(bucketlist_id=id).paginate(page, limit, False).items
                         else:
-                            items = Item.query.filter_by(bucketlist_id=id).paginate(page, items_per_page, False).items
+                            items = Item.query.filter_by(bucketlist_id=id).paginate(page, limit, False).items
                         results = []
                         for item in items:
                             obj = {
