@@ -57,24 +57,30 @@ def create_app(config_name):
     """login user"""
     @app.route('/auth/login', methods=['POST'])
     def user_login():
-        # first check if user with email exists
-        user = User.query.filter_by(email=request.data.get('email')).first()
-        if user and user.password_is_valid(request.data.get('password')):
-            # correct credentials
-            # generate access token. this will be used as the authorization header
-            access_token = user.generate_token(user.id)
-            if access_token:
-                response = {
-                    'message': 'You logged in successfully',
-                    'access_token': access_token.decode()
-                }, 200
-                return response
+        email = request.data.get('email')
+        password = request.data.get('password')
+        if email == None or password == None:
+            # no args
+            return {'message': 'Enter valid input'}
         else:
-            # user does not exists
-            response = {
-                'message': 'Verify credentials and try again'
-            }, 401
-            return response
+            # first check if user with email exists
+            user = User.query.filter_by(email=request.data.get('email')).first()
+            if user and user.password_is_valid(request.data.get('password')):
+                # correct credentials
+                # generate access token. this will be used as the authorization header
+                access_token = user.generate_token(user.id)
+                if access_token:
+                    response = {
+                        'message': 'You logged in successfully',
+                        'access_token': access_token.decode()
+                    }, 200
+                    return response
+            else:
+                # user does not exists
+                response = {
+                    'message': 'Verify credentials and try again'
+                }, 401
+                return response
 
     """ logout user """
     @app.route('/auth/logout', methods=['POST'])

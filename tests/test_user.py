@@ -121,6 +121,14 @@ class UserTestCase(unittest.TestCase):
         # test that there is an access token created
         self.assertTrue(result['access_token'])
 
+        # no keys sent
+        response = self.client().post(
+            '/auth/login',
+            data={}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Enter valid input', str(response.data))
+
     def test_user_logout(self):
         """Test API can logout user"""
         # request to logout
