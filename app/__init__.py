@@ -357,24 +357,28 @@ def create_app(config_name):
                         if request.method == 'PUT':
                             # edit item
                             name = request.data.get('name')
-                            # handle duplicate names first
-                            other_item = Item.query.filter_by(name=name, bucketlist_id=bucketlist_id).first()
-                            if other_item:
-                                return {'message': 'Duplicate entry'}
+                            if name == None or not str(name).strip():
+                                # handle invalid input
+                                return {'message': 'Enter valid input'}
                             else:
-                                # saving item in lowercase
-                                name = name.lower()
-                                if name:
-                                    item.name = name
-                                    item.save()
-                                    response = jsonify({
-                                        'id': item.id,
-                                        'name': item.name,
-                                        'date_created': item.date_created,
-                                        'bucketlist_id': bucketlist_id
-                                    })
-                                    response.status_code = 201
-                                    return response
+                                # handle duplicate names first
+                                other_item = Item.query.filter_by(name=name, bucketlist_id=bucketlist_id).first()
+                                if other_item:
+                                    return {'message': 'Duplicate entry'}
+                                else:
+                                    # saving item in lowercase
+                                    name = name.lower()
+                                    if name:
+                                        item.name = name
+                                        item.save()
+                                        response = jsonify({
+                                            'id': item.id,
+                                            'name': item.name,
+                                            'date_created': item.date_created,
+                                            'bucketlist_id': bucketlist_id
+                                        })
+                                        response.status_code = 201
+                                        return response
                         elif request.method == 'DELETE':
                             # delete item
                             item.delete()

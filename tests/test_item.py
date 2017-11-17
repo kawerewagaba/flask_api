@@ -163,7 +163,6 @@ class ItemTestCase(unittest.TestCase):
         self.assertIn('house', str(res.data))
 
         # update with duplicate name
-        item_id = json.loads(res.data.decode())['id']
         res = self.client().put(
             '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
@@ -172,7 +171,34 @@ class ItemTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn('Duplicate entry', str(res.data))
 
-        # update with invalid input
+        """update with invalid input"""
+
+        # no args
+        res = self.client().put(
+            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            headers=dict(Authorization=self.access_token),
+            data={}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
+        # user supplied space
+        res = self.client().put(
+            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            headers=dict(Authorization=self.access_token),
+            data={'name': ' '}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
+        #user supplied empty string
+        res = self.client().put(
+            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            headers=dict(Authorization=self.access_token),
+            data={'name': ''}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
 
     def test_bukcetlist_item_pagination(self):
         """ Testing item pagination """
