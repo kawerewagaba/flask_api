@@ -62,6 +62,32 @@ class ItemTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertIn('tesla', str(res.data))
 
+    def test_item_duplicate_name(self):
+        """ test duplicate item names """
+        result = self.create_bucketlist()
+        # we need to obtain bucketlist ID
+        bucketlist_id = json.loads(result.data.decode())['id']
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token),
+            data=self.item
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('tesla', str(res.data))
+
+        # try adding one with the same name
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token),
+            data=self.item
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Duplicate entry', str(res.data))
+
+    def test_item_invalid_input(self):
+        """ test invalid user input """
+        pass
+
     def test_get_items_in_bucketlist(self):
         """ test API gets items in a bucketlist """
         result = self.create_bucketlist()
