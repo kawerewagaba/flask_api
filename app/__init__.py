@@ -225,25 +225,29 @@ def create_app(config_name):
                     elif request.method == 'PUT':
                         # edit bucketlist
                         name = request.data.get('name')
-                        # saving bucketlists in lowercase
-                        name = name.lower()
-                        if name:
-                            # check for duplicates for this bucketlist
-                            other_bucketlist = Bucketlist.query.filter_by(name=name, user_id=user_id).first()
-                            if other_bucketlist:
-                                return {'message': 'Duplicate entry'}
-                            else:
-                                bucketlist.name = name
-                                bucketlist.save()
-                                response = jsonify({
-                                    'id': bucketlist.id,
-                                    'name': bucketlist.name,
-                                    'date_created': bucketlist.date_created,
-                                    'date_modified': bucketlist.date_modified,
-                                    'created_by': user_id
-                                })
-                                response.status_code = 200
-                                return response
+                        if name == None or not str(name).strip():
+                            # handle invalid input
+                            return {'message': 'Enter valid input'}
+                        else:
+                            # saving bucketlists in lowercase
+                            name = name.lower()
+                            if name:
+                                # check for duplicates for this bucketlist
+                                other_bucketlist = Bucketlist.query.filter_by(name=name, user_id=user_id).first()
+                                if other_bucketlist:
+                                    return {'message': 'Duplicate entry'}
+                                else:
+                                    bucketlist.name = name
+                                    bucketlist.save()
+                                    response = jsonify({
+                                        'id': bucketlist.id,
+                                        'name': bucketlist.name,
+                                        'date_created': bucketlist.date_created,
+                                        'date_modified': bucketlist.date_modified,
+                                        'created_by': user_id
+                                    })
+                                    response.status_code = 200
+                                    return response
                     else:
                         # GET bucketlist by id
                         response = jsonify({

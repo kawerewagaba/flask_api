@@ -161,7 +161,34 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         self.assertIn('Duplicate entry', str(rv.data))
 
-        # update with invalid input
+        """update with invalid input"""
+
+        # no args
+        rv = self.client().put(
+            '/bucketlists/1',
+            headers=dict(Authorization=self.access_token),
+            data={}
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('Enter valid input', str(rv.data))
+
+        # user supplied space
+        rv = self.client().put(
+            '/bucketlists/1',
+            headers=dict(Authorization=self.access_token),
+            data={'name': ' '}
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('Enter valid input', str(rv.data))
+
+        # user supplied empty string
+        rv = self.client().put(
+            '/bucketlists/1',
+            headers=dict(Authorization=self.access_token),
+            data={'name': ''}
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('Enter valid input', str(rv.data))
 
     def test_bucketlist_deletion(self):
         """Test API can delete an existing bucketlist. (DELETE request)."""

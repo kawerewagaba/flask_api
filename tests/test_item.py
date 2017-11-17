@@ -191,7 +191,7 @@ class ItemTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn('Enter valid input', str(res.data))
 
-        #user supplied empty string
+        # user supplied empty string
         res = self.client().put(
             '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
