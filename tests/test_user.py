@@ -46,6 +46,16 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn(self.user['email'], str(response.data))
 
+    def test_duplicate_user(self):
+        """ handle duplicate user """
+        # register a user with details that exist
+        response = self.client().post(
+            '/auth/register',
+            data={'email': 'test@user.com', 'password': 'test_pass'}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('already taken', str(response.data))
+
     def test_user_login(self):
         """Test API can login user"""
         # first create a user in the test_db

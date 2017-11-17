@@ -26,16 +26,24 @@ def create_app(config_name):
     """create user"""
     @app.route('/auth/register', methods=['POST'])
     def user_creation():
-        email = str(request.data.get('email'))
-        password = str(request.data.get('password'))
-        user = User(email, password)
-        user.save()
-        response = jsonify({
-        'id': user.id,
-        'email': user.email
-        })
-        response.status_code = 201
-        return response
+        try:
+            email = str(request.data.get('email'))
+            # first check if user with email exists
+            user = User.query.filter_by(email=email).first()
+            if user:
+                return {"Error": 'Email address: <' + email + '> already taken.'}
+            else:
+                password = str(request.data.get('password'))
+                user = User(email, password)
+                user.save()
+                response = jsonify({
+                    'id': user.id,
+                    'email': user.email
+                })
+                response.status_code = 201
+                return response
+        except Exception as e:
+            return {"Error": e}
 
     """login user"""
     @app.route('/auth/login', methods=['POST'])
