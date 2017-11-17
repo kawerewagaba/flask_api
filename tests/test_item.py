@@ -153,6 +153,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
+        self.assertEqual(res.status_code, 201)
         # then check if it has changed
         res = self.client().get(
             '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
@@ -160,6 +161,18 @@ class ItemTestCase(unittest.TestCase):
         )
         self.assertEqual(res.status_code, 200)
         self.assertIn('house', str(res.data))
+
+        # update with duplicate name
+        item_id = json.loads(res.data.decode())['id']
+        res = self.client().put(
+            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            headers=dict(Authorization=self.access_token),
+            data={'name': 'build a family house'}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Duplicate entry', str(res.data))
+
+        # update with invalid input
 
     def test_bukcetlist_item_pagination(self):
         """ Testing item pagination """

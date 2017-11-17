@@ -356,20 +356,25 @@ def create_app(config_name):
                     else:
                         if request.method == 'PUT':
                             # edit item
-                            name = str(request.data.get('name'))
-                            # saving item in lowercase
-                            name = name.lower()
-                            if name:
-                                item.name = name
-                                item.save()
-                                response = jsonify({
-                                    'id': item.id,
-                                    'name': item.name,
-                                    'date_created': item.date_created,
-                                    'bucketlist_id': bucketlist_id
-                                })
-                                response.status_code = 201
-                                return response
+                            name = request.data.get('name')
+                            # handle duplicate names first
+                            other_item = Item.query.filter_by(name=name, bucketlist_id=bucketlist_id).first()
+                            if other_item:
+                                return {'message': 'Duplicate entry'}
+                            else:
+                                # saving item in lowercase
+                                name = name.lower()
+                                if name:
+                                    item.name = name
+                                    item.save()
+                                    response = jsonify({
+                                        'id': item.id,
+                                        'name': item.name,
+                                        'date_created': item.date_created,
+                                        'bucketlist_id': bucketlist_id
+                                    })
+                                    response.status_code = 201
+                                    return response
                         elif request.method == 'DELETE':
                             # delete item
                             item.delete()
