@@ -29,28 +29,24 @@ def create_app(config_name):
         try:
             email = request.data.get('email')
             password = request.data.get('password')
-            if email == None or password == None:
+            # handle invalid input
+            if email == None or password == None or not str(email).strip() or not str(password).strip():
                 # no args
                 return {'message': 'Enter valid input'}
             else:
-                # first handle invalid input
-                if str(email).strip() and str(password).strip():
-                    # check if user with email exists
-                    user = User.query.filter_by(email=email).first()
-                    if user:
-                        return {"Error": 'Email address: <' + email + '> already taken.'}
-                    else:
-                        user = User(email, password)
-                        user.save()
-                        response = jsonify({
-                            'id': user.id,
-                            'email': user.email
-                        })
-                        response.status_code = 201
-                        return response
+                # check if user with email exists
+                user = User.query.filter_by(email=email).first()
+                if user:
+                    return {"Error": 'Email address: <' + email + '> already taken.'}
                 else:
-                    # invalid input
-                    return {'message': 'Enter valid input'}
+                    user = User(email, password)
+                    user.save()
+                    response = jsonify({
+                        'id': user.id,
+                        'email': user.email
+                    })
+                    response.status_code = 201
+                    return response
         except Exception as e:
             return {"Error": e}
 
@@ -134,21 +130,26 @@ def create_app(config_name):
                     # go ahead and handle the request, user is authenticated
                     if request.method == "POST":
                         # create bucketlists
-                        name = str(request.data.get('name', ''))
-                        # saving bucketlists in lowercase
-                        name = name.lower()
-                        if name:
-                            bucketlist = Bucketlist(name=name, user_id=user_id)
-                            bucketlist.save()
-                            response = jsonify({
-                                'id': bucketlist.id,
-                                'name': bucketlist.name,
-                                'date_created': bucketlist.date_created,
-                                'date_modified': bucketlist.date_modified,
-                                'created_by': user_id
-                            })
-                            response.status_code = 201
-                            return response
+                        name = request.data.get('name')
+                        if name == None or not str(name).strip():
+                            # no args
+                            return {'message': 'Enter valid input'}
+                        # test valid input
+                        else:
+                            # saving bucketlists in lowercase
+                            name = name.lower()
+                            if name:
+                                bucketlist = Bucketlist(name=name, user_id=user_id)
+                                bucketlist.save()
+                                response = jsonify({
+                                    'id': bucketlist.id,
+                                    'name': bucketlist.name,
+                                    'date_created': bucketlist.date_created,
+                                    'date_modified': bucketlist.date_modified,
+                                    'created_by': user_id
+                                })
+                                response.status_code = 201
+                                return response
                     else:
                         # GET all bucketlists
                         # get page, or use 1 as the default

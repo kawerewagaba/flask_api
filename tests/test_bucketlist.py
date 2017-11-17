@@ -48,6 +48,35 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertIn('career', str(res.data))
 
+    def test_invalid_input(self):
+        """ handle invalid user input """
+        # no argument sent
+        res = self.client().post(
+            '/bucketlists/',
+            headers=dict(Authorization=self.access_token),
+            data={}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
+        # user supplied space
+        res = self.client().post(
+            '/bucketlists/',
+            headers=dict(Authorization=self.access_token),
+            data={'name': ' '}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
+        # user supplied empty string
+        res = self.client().post(
+            '/bucketlists/',
+            headers=dict(Authorization=self.access_token),
+            data={'name': ''}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
     def test_api_can_get_all_bucketlists(self):
         """Test API can get a bucketlist (GET request)."""
         res = self.client().post(
