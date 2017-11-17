@@ -27,21 +27,30 @@ def create_app(config_name):
     @app.route('/auth/register', methods=['POST'])
     def user_creation():
         try:
-            email = str(request.data.get('email'))
-            # first check if user with email exists
-            user = User.query.filter_by(email=email).first()
-            if user:
-                return {"Error": 'Email address: <' + email + '> already taken.'}
+            email = request.data.get('email')
+            password = request.data.get('password')
+            if email == None or password == None:
+                # no args
+                return {'message': 'Enter valid input'}
             else:
-                password = str(request.data.get('password'))
-                user = User(email, password)
-                user.save()
-                response = jsonify({
-                    'id': user.id,
-                    'email': user.email
-                })
-                response.status_code = 201
-                return response
+                # first handle invalid input
+                if str(email).strip() and str(password).strip():
+                    # check if user with email exists
+                    user = User.query.filter_by(email=email).first()
+                    if user:
+                        return {"Error": 'Email address: <' + email + '> already taken.'}
+                    else:
+                        user = User(email, password)
+                        user.save()
+                        response = jsonify({
+                            'id': user.id,
+                            'email': user.email
+                        })
+                        response.status_code = 201
+                        return response
+                else:
+                    # invalid input
+                    return {'message': 'Enter valid input'}
         except Exception as e:
             return {"Error": e}
 

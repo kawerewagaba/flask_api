@@ -98,6 +98,14 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('Enter valid input', str(response.data))
 
+        # no keys sent
+        response = self.client().post(
+            '/auth/register',
+            data={}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Enter valid input', str(response.data))
+
     def test_user_login(self):
         """Test API can login user"""
         # first create a user in the test_db
