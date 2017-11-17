@@ -139,17 +139,22 @@ def create_app(config_name):
                             # saving bucketlists in lowercase
                             name = name.lower()
                             if name:
-                                bucketlist = Bucketlist(name=name, user_id=user_id)
-                                bucketlist.save()
-                                response = jsonify({
-                                    'id': bucketlist.id,
-                                    'name': bucketlist.name,
-                                    'date_created': bucketlist.date_created,
-                                    'date_modified': bucketlist.date_modified,
-                                    'created_by': user_id
-                                })
-                                response.status_code = 201
-                                return response
+                                # check for duplicates for this bucketlist
+                                bucketlist = Bucketlist.query.filter_by(name=name, user_id=user_id).first()
+                                if bucketlist:
+                                    return {'message': 'Duplicate entry'}
+                                else:
+                                    bucketlist = Bucketlist(name=name, user_id=user_id)
+                                    bucketlist.save()
+                                    response = jsonify({
+                                        'id': bucketlist.id,
+                                        'name': bucketlist.name,
+                                        'date_created': bucketlist.date_created,
+                                        'date_modified': bucketlist.date_modified,
+                                        'created_by': user_id
+                                    })
+                                    response.status_code = 201
+                                    return response
                     else:
                         # GET all bucketlists
                         # get page, or use 1 as the default

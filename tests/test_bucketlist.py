@@ -48,7 +48,26 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertIn('career', str(res.data))
 
-    def test_invalid_input(self):
+    def test_bucketlist_duplicate_name(self):
+        """ handle duplicate names """
+        # create bucketlist
+        res = self.client().post(
+            '/bucketlists/',
+            headers=dict(Authorization=self.access_token),
+            data=self.bucketlist
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('career', str(res.data))
+        # try to create one with same name
+        res = self.client().post(
+            '/bucketlists/',
+            headers=dict(Authorization=self.access_token),
+            data=self.bucketlist
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Duplicate entry', str(res.data))
+
+    def test_bucketlist_invalid_input(self):
         """ handle invalid user input """
         # no argument sent
         res = self.client().post(

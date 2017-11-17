@@ -46,7 +46,7 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn(self.user['email'], str(response.data))
 
-    def test_duplicate_user(self):
+    def test_user_duplicate_email(self):
         """ handle duplicate user """
         # register a user with details that exist
         response = self.client().post(
@@ -56,7 +56,7 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('already taken', str(response.data))
 
-    def test_invalid_input(self):
+    def test_user_invalid_input(self):
         """ handle invalid input """
         # no email
         response = self.client().post(
