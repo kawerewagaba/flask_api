@@ -58,6 +58,7 @@ class BucketlistTestCase(unittest.TestCase):
         )
         self.assertEqual(res.status_code, 201)
         self.assertIn('career', str(res.data))
+
         # try to create one with same name
         res = self.client().post(
             '/bucketlists/',
@@ -148,6 +149,19 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token)
         )
         self.assertIn('goals', str(results.data))
+
+        # update with duplicate name
+        rv = self.client().put(
+            '/bucketlists/1',
+            headers=dict(Authorization=self.access_token),
+            data={
+                "name": "Lifestyle goals"
+            }
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertIn('Duplicate entry', str(rv.data))
+
+        # update with invalid input
 
     def test_bucketlist_deletion(self):
         """Test API can delete an existing bucketlist. (DELETE request)."""
