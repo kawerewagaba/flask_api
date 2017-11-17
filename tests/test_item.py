@@ -86,7 +86,35 @@ class ItemTestCase(unittest.TestCase):
 
     def test_item_invalid_input(self):
         """ test invalid user input """
-        pass
+        # no arguments sent
+        result = self.create_bucketlist()
+        # we need to obtain bucketlist ID
+        bucketlist_id = json.loads(result.data.decode())['id']
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token),
+            data={}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
+        # user supplied space
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token),
+            data={'name': ' '}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
+
+        # user supplied empty string
+        res = self.client().post(
+            '/bucketlists/{}/items/'.format(bucketlist_id),
+            headers=dict(Authorization=self.access_token),
+            data={'name': ''}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Enter valid input', str(res.data))
 
     def test_get_items_in_bucketlist(self):
         """ test API gets items in a bucketlist """

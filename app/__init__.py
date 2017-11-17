@@ -132,9 +132,8 @@ def create_app(config_name):
                         # create bucketlists
                         name = request.data.get('name')
                         if name == None or not str(name).strip():
-                            # no args
+                            # handle invalid input
                             return {'message': 'Enter valid input'}
-                        # test valid input
                         else:
                             # saving bucketlists in lowercase
                             name = name.lower()
@@ -279,24 +278,28 @@ def create_app(config_name):
                     # go ahead and handle the request, user is authenticated
                     if request.method == 'POST':
                         name = request.data.get('name')
-                        # saving item in lowercase
-                        name = name.lower()
-                        if name:
-                            # handle duplicate names first
-                            other_item = Item.query.filter_by(name=name, bucketlist_id=id).first()
-                            if other_item:
-                                return {'message': 'Duplicate entry'}
-                            else:
-                                item = Item(name=name, bucketlist_id=id)
-                                item.save()
-                                response = jsonify({
-                                    'id': item.id,
-                                    'name': item.name,
-                                    'date_created': item.date_created,
-                                    'bucketlist_id': id
-                                })
-                                response.status_code = 201
-                                return response
+                        if name == None or not str(name).strip():
+                            # handle invalid input
+                            return {'message': 'Enter valid input'}
+                        else:
+                            # saving item in lowercase
+                            name = name.lower()
+                            if name:
+                                # handle duplicate names first
+                                other_item = Item.query.filter_by(name=name, bucketlist_id=id).first()
+                                if other_item:
+                                    return {'message': 'Duplicate entry'}
+                                else:
+                                    item = Item(name=name, bucketlist_id=id)
+                                    item.save()
+                                    response = jsonify({
+                                        'id': item.id,
+                                        'name': item.name,
+                                        'date_created': item.date_created,
+                                        'bucketlist_id': id
+                                    })
+                                    response.status_code = 201
+                                    return response
                     elif request.method == 'GET':
                         # get page, or use 1 as the default
                         page = request.args.get('page', 1, type=int)
