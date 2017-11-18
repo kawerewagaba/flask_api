@@ -163,17 +163,17 @@ class UserTestCase(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 401)
 
-    def test_user_reset_password(self):
+    def test_user_change_password(self):
         """Test API allows password reset"""
         response = self.client().post(
-            '/auth/reset-password',
+            '/auth/change-password',
             data={
                 'access_token': self.access_token,
                 'password': 'new_pass'
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn('reset', str(response.data))
+        self.assertIn('changed', str(response.data))
         # try login with previous password. it should fail
         login_response = self.client().post('/auth/login', data=self.user)
         self.assertIn('Verify credentials and try again', str(login_response.data))
@@ -188,7 +188,7 @@ class UserTestCase(unittest.TestCase):
         self.assertIn('You logged in successfully', str(login_response.data))
         self.assertEqual(login_response.status_code, 200)
 
-        """ test resource access after password reset. It shoud fail. """
+        """ test resource access after password change. It shoud fail. """
         # try to view bucketlists
         response = self.client().get(
             '/bucketlists/',

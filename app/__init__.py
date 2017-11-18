@@ -91,8 +91,8 @@ def create_app(config_name):
             # something went wrong on the server side
             return {'Error': e}
 
-    """ reset password """
-    @app.route('/auth/reset-password', methods=['POST'])
+    """ change password """
+    @app.route('/auth/change-password', methods=['POST'])
     def reset_password():
         try:
             access_token = request.data.get('access_token')
@@ -107,7 +107,7 @@ def create_app(config_name):
                             user.password = Bcrypt().generate_password_hash(password=new_pass).decode()
                             user.save()
                             revoked_tokens.append(access_token)
-                            return {'message': 'Password reset successfully'}, 200
+                            return {'message': 'Password changed successfully'}, 200
             else:
                 #user not legit
                 return {'Authentication': 'You are not authorized to access this page'}, 401
