@@ -93,7 +93,7 @@ def create_app(config_name):
 
     """ change password """
     @app.route('/auth/change-password', methods=['POST'])
-    def reset_password():
+    def change_password():
         try:
             new_pass = request.data.get('password')
             # handle invalid input
@@ -118,6 +118,26 @@ def create_app(config_name):
 
         except Exception as e:
             # something went wrong on the server side
+            return {'Error': e}
+
+    """ reset forgotten password """
+    @app.route('/auth/reset-password', methods=['POST'])
+    def reset_password():
+        try:
+            email = request.data.get('email')
+            # handle invalid input
+            if email == None or not str(email).strip():
+                # no args
+                return {'message': 'Enter valid input'}
+            else:
+                # check if user with email exists
+                user = User.query.filter_by(email=email).first()
+                if user:
+                    # this message is returned after a successful email is sent
+                    return {'message': 'Check your email for a reset token'}
+                else:
+                    return {'message': 'Email not found in database'}
+        except Exception as e:
             return {'Error': e}
 
     """create, and retrieve bucketlists"""
