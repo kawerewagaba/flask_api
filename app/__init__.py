@@ -83,7 +83,7 @@ def create_app(config_name):
     def user_logout():
         try:
             #get the access token from the request
-            access_token = request.data.get('access_token')
+            access_token = request.headers.get('Authorization')
             if access_token:
                 revoked_tokens.append(access_token)
                 return {'message': 'You logged out successfully'}

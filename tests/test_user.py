@@ -132,7 +132,10 @@ class UserTestCase(unittest.TestCase):
     def test_user_logout(self):
         """Test API can logout user"""
         # request to logout
-        response = self.client().post('/auth/logout', data={'access_token': self.access_token})
+        response = self.client().post(
+            '/auth/logout',
+            headers=dict(Authorization=self.access_token)
+        )
         self.assertEqual(json.loads(response.data)['message'], 'You logged out successfully')
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.access_token, str(revoked_tokens))
