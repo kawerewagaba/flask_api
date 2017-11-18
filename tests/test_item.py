@@ -153,7 +153,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 200)
         # then check if it has changed
         res = self.client().get(
             '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),

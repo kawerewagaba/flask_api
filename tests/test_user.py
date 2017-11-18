@@ -126,13 +126,16 @@ class UserTestCase(unittest.TestCase):
             '/auth/login',
             data={}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 401)
         self.assertIn('Enter valid input', str(response.data))
 
     def test_user_logout(self):
         """Test API can logout user"""
         # request to logout
-        response = self.client().post('/auth/logout', data={'access_token': self.access_token})
+        response = self.client().post(
+            '/auth/logout',
+            headers=dict(Authorization=self.access_token)
+        )
         self.assertEqual(json.loads(response.data)['message'], 'You logged out successfully')
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.access_token, str(revoked_tokens))
@@ -164,9 +167,9 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_user_change_password(self):
-        """Test API allows password reset"""
+        """Test API allows password change"""
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': 'new_pass'}
         )
@@ -198,7 +201,7 @@ class UserTestCase(unittest.TestCase):
 
         # no args
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={}
         )
@@ -207,7 +210,7 @@ class UserTestCase(unittest.TestCase):
 
         # password is space
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': ' '}
         )
@@ -216,7 +219,7 @@ class UserTestCase(unittest.TestCase):
 
         # empty pass
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': ''}
         )

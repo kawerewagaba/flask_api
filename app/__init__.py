@@ -57,7 +57,7 @@ def create_app(config_name):
         password = request.data.get('password')
         if email == None or password == None:
             # no args
-            return {'message': 'Enter valid input'}
+            return {'message': 'Enter valid input'}, 401
         else:
             # first check if user with email exists
             user = User.query.filter_by(email=request.data.get('email')).first()
@@ -83,7 +83,7 @@ def create_app(config_name):
     def user_logout():
         try:
             #get the access token from the request
-            access_token = request.data.get('access_token')
+            access_token = request.headers.get('Authorization')
             if access_token:
                 revoked_tokens.append(access_token)
                 return {'message': 'You logged out successfully'}
@@ -92,8 +92,8 @@ def create_app(config_name):
             return {'Error': e}
 
     """ change password """
-    @app.route('/auth/change-password', methods=['POST'])
-    def reset_password():
+    @app.route('/auth/reset-password', methods=['POST'])
+    def change_password():
         try:
             new_pass = request.data.get('password')
             # handle invalid input
@@ -250,7 +250,6 @@ def create_app(config_name):
                                         'date_modified': bucketlist.date_modified,
                                         'created_by': user_id
                                     })
-                                    response.status_code = 200
                                     return response
                     else:
                         # GET bucketlist by id
@@ -385,7 +384,6 @@ def create_app(config_name):
                                             'date_created': item.date_created,
                                             'bucketlist_id': bucketlist_id
                                         })
-                                        response.status_code = 201
                                         return response
                         elif request.method == 'DELETE':
                             # delete item
