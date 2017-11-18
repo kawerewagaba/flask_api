@@ -95,12 +95,16 @@ def create_app(config_name):
     @app.route('/auth/change-password', methods=['POST'])
     def reset_password():
         try:
-            access_token = request.headers.get('Authorization')
-            if access_token:
-                user_id = User.decode_token(access_token)
-                if not isinstance(user_id, str):
-                    new_pass = request.data.get('password')
-                    if new_pass:
+            new_pass = request.data.get('password')
+            # handle invalid input
+            if new_pass == None or not str(new_pass).strip():
+                # no args
+                return {'message': 'Enter valid input'}
+            else:
+                access_token = request.headers.get('Authorization')
+                if access_token:
+                    user_id = User.decode_token(access_token)
+                    if not isinstance(user_id, str):
                         user = User.query.filter_by(id=user_id).first()
                         if user:
                             # hash new password
@@ -108,9 +112,9 @@ def create_app(config_name):
                             user.save()
                             revoked_tokens.append(access_token)
                             return {'message': 'Password changed successfully'}, 200
-            else:
-                #user not legit
-                return {'Authentication': 'You are not authorized to access this page'}, 401
+                else:
+                    #user not legit
+                    return {'Authentication': 'You are not authorized to access this page'}, 401
 
         except Exception as e:
             # something went wrong on the server side

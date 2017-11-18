@@ -194,6 +194,35 @@ class UserTestCase(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 401)
 
+        """ test password change with invalid input """
+
+        # no args
+        response = self.client().post(
+            '/auth/change-password',
+            headers=dict(Authorization=self.access_token),
+            data={}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Enter valid input', str(response.data))
+
+        # password is space
+        response = self.client().post(
+            '/auth/change-password',
+            headers=dict(Authorization=self.access_token),
+            data={'password': ' '}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Enter valid input', str(response.data))
+
+        # empty pass
+        response = self.client().post(
+            '/auth/change-password',
+            headers=dict(Authorization=self.access_token),
+            data={'password': ''}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Enter valid input', str(response.data))
+
     def tearDown(self):
         """ teardown all initialized variables """
         with self.app.app_context():
