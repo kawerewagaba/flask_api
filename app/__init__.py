@@ -250,7 +250,6 @@ def create_app(config_name):
                                         'date_modified': bucketlist.date_modified,
                                         'created_by': user_id
                                     })
-                                    response.status_code = 200
                                     return response
                     else:
                         # GET bucketlist by id
@@ -385,7 +384,6 @@ def create_app(config_name):
                                             'date_created': item.date_created,
                                             'bucketlist_id': bucketlist_id
                                         })
-                                        response.status_code = 201
                                         return response
                         elif request.method == 'DELETE':
                             # delete item

@@ -226,6 +226,10 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('Enter valid input', str(response.data))
 
+    def test_user_reset_password(self):
+        """ test user resets forgotten password """
+        pass
+
     def tearDown(self):
         """ teardown all initialized variables """
         with self.app.app_context():
