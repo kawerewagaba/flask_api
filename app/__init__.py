@@ -95,7 +95,7 @@ def create_app(config_name):
     @app.route('/auth/change-password', methods=['POST'])
     def reset_password():
         try:
-            access_token = request.data.get('access_token')
+            access_token = request.headers.get('Authorization')
             if access_token:
                 user_id = User.decode_token(access_token)
                 if not isinstance(user_id, str):

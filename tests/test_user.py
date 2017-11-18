@@ -167,10 +167,8 @@ class UserTestCase(unittest.TestCase):
         """Test API allows password reset"""
         response = self.client().post(
             '/auth/change-password',
-            data={
-                'access_token': self.access_token,
-                'password': 'new_pass'
-            }
+            headers=dict(Authorization=self.access_token),
+            data={'password': 'new_pass'}
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn('changed', str(response.data))
