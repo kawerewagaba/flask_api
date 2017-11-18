@@ -57,7 +57,7 @@ def create_app(config_name):
         password = request.data.get('password')
         if email == None or password == None:
             # no args
-            return {'message': 'Enter valid input'}
+            return {'message': 'Enter valid input'}, 401
         else:
             # first check if user with email exists
             user = User.query.filter_by(email=request.data.get('email')).first()

@@ -126,7 +126,7 @@ class UserTestCase(unittest.TestCase):
             '/auth/login',
             data={}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 401)
         self.assertIn('Enter valid input', str(response.data))
 
     def test_user_logout(self):
