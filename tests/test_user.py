@@ -169,7 +169,7 @@ class UserTestCase(unittest.TestCase):
     def test_user_change_password(self):
         """Test API allows password change"""
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': 'new_pass'}
         )
@@ -201,7 +201,7 @@ class UserTestCase(unittest.TestCase):
 
         # no args
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={}
         )
@@ -210,7 +210,7 @@ class UserTestCase(unittest.TestCase):
 
         # password is space
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': ' '}
         )
@@ -219,73 +219,9 @@ class UserTestCase(unittest.TestCase):
 
         # empty pass
         response = self.client().post(
-            '/auth/change-password',
+            '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': ''}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Enter valid input', str(response.data))
-
-    def test_user_reset_password(self):
-        """ test user resets forgotten password """
-
-        # first create a user in the test_db
-        response = self.client().post(
-            '/auth/register',
-            data={
-                'email': 'reset@user.com',
-                'password': 'reset_pass'
-            }
-        )
-        self.assertEqual(response.status_code, 201)
-
-        # then, they supply their email to reset pass
-        response = self.client().post(
-            '/auth/reset-password',
-            data={'email': 'reset@user.com'}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Check your email for a reset token', str(response.data))
-
-        """
-        test reset token has been generated
-        they can login and change password
-        """
-
-        # test user can access protected routes
-
-        # then send it to password change route
-
-        # test user supplies non existing email
-        response = self.client().post(
-            '/auth/reset-password',
-            data={'email': 'not_in_db@user.com'}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Email not found in database', str(response.data))
-
-        """ test reset with invalid input """
-
-        # no args
-        response = self.client().post(
-            '/auth/reset-password',
-            data={}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Enter valid input', str(response.data))
-
-        # email is space
-        response = self.client().post(
-            '/auth/reset-password',
-            data={'email': ' '}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Enter valid input', str(response.data))
-
-        # email pass
-        response = self.client().post(
-            '/auth/reset-password',
-            data={'email': ''}
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn('Enter valid input', str(response.data))
