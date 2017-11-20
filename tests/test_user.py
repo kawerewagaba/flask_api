@@ -3,7 +3,7 @@
 import unittest
 import json
 
-from app import create_app, db, revoked_tokens
+from app import create_app, db, revoked_tokens, version
 
 class UserTestCase(unittest.TestCase):
     """This class represents the user test case"""
@@ -30,7 +30,7 @@ class UserTestCase(unittest.TestCase):
             'email': email,
             'password': password
         }
-        return self.client().post('/auth/register', data=user)
+        return self.client().post(version + '/auth/register', data=user)
 
     def login_user(self, email='test@user.com', password='test_pass'):
         # methods helps login created user
@@ -38,11 +38,11 @@ class UserTestCase(unittest.TestCase):
             'email': email,
             'password': password
         }
-        return self.client().post('/auth/login', data=user)
+        return self.client().post(version + '/auth/login', data=user)
 
     def test_user_creation(self):
         """Test API can create a user (POST request) """
-        response = self.client().post('/auth/register', data=self.user)
+        response = self.client().post(version + '/auth/register', data=self.user)
         self.assertEqual(response.status_code, 201)
         self.assertIn(self.user['email'], str(response.data))
 
@@ -50,7 +50,7 @@ class UserTestCase(unittest.TestCase):
         """ handle duplicate user """
         # register a user with details that exist
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={'email': 'test@user.com', 'password': 'test_pass'}
         )
         self.assertEqual(response.status_code, 200)
@@ -60,7 +60,7 @@ class UserTestCase(unittest.TestCase):
         """ handle invalid input """
         # no email
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={'email': '', 'password': 'test_pass'}
         )
         self.assertEqual(response.status_code, 200)
@@ -68,7 +68,7 @@ class UserTestCase(unittest.TestCase):
 
         # email is space
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={'email': ' ', 'password': 'test_pass'}
         )
         self.assertEqual(response.status_code, 200)
@@ -76,7 +76,7 @@ class UserTestCase(unittest.TestCase):
 
         # no password
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={'email': 'invalid@user.com', 'password': ''}
         )
         self.assertEqual(response.status_code, 200)
@@ -84,7 +84,7 @@ class UserTestCase(unittest.TestCase):
 
         # password is space
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={'email': 'invalid@user.com', 'password': ' '}
         )
         self.assertEqual(response.status_code, 200)
@@ -92,7 +92,7 @@ class UserTestCase(unittest.TestCase):
 
         # no email and password
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={'email': '', 'password': ''}
         )
         self.assertEqual(response.status_code, 200)
@@ -100,7 +100,7 @@ class UserTestCase(unittest.TestCase):
 
         # no keys sent
         response = self.client().post(
-            '/auth/register',
+            version + '/auth/register',
             data={}
         )
         self.assertEqual(response.status_code, 200)
@@ -109,10 +109,10 @@ class UserTestCase(unittest.TestCase):
     def test_user_login(self):
         """Test API can login user"""
         # first create a user in the test_db
-        response = self.client().post('/auth/register', data=self.user)
+        response = self.client().post(version + '/auth/register', data=self.user)
         self.assertEqual(response.status_code, 201)
         # then try to login
-        login_response = self.client().post('/auth/login', data=self.user)
+        login_response = self.client().post(version + '/auth/login', data=self.user)
         #first make sure data is passed back
         self.assertEqual(login_response.status_code, 200)
         #get the results in json format
@@ -123,7 +123,7 @@ class UserTestCase(unittest.TestCase):
 
         # no keys sent
         response = self.client().post(
-            '/auth/login',
+            version + '/auth/login',
             data={}
         )
         self.assertEqual(response.status_code, 401)
@@ -133,7 +133,7 @@ class UserTestCase(unittest.TestCase):
         """Test API can logout user"""
         # request to logout
         response = self.client().post(
-            '/auth/logout',
+            version + '/auth/logout',
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(json.loads(response.data)['message'], 'You logged out successfully')
@@ -141,26 +141,26 @@ class UserTestCase(unittest.TestCase):
         self.assertIn(self.access_token, str(revoked_tokens))
         # try to view bucketlists
         response = self.client().get(
-            '/bucketlists/',
+            version + '/bucketlists/',
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 401)
         # try to edit bucketlist
         response = self.client().put(
-            '/bucketlists/1',
+            version + '/bucketlists/1',
             headers=dict(Authorization=self.access_token),
             data={"name": "Lifestyle goals"}
         )
         self.assertEqual(response.status_code, 401)
         # try to view items in bucketlist
         response = self.client().get(
-            '/bucketlists/1/items/',
+            version + '/bucketlists/1/items/',
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 401)
         # try to edit item in bucketlist
         response = self.client().put(
-            '/bucketlists/1/items/1',
+            version + '/bucketlists/1/items/1',
             headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
@@ -169,18 +169,18 @@ class UserTestCase(unittest.TestCase):
     def test_user_change_password(self):
         """Test API allows password change"""
         response = self.client().post(
-            '/auth/reset-password',
+            version + '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': 'new_pass'}
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn('changed', str(response.data))
         # try login with previous password. it should fail
-        login_response = self.client().post('/auth/login', data=self.user)
+        login_response = self.client().post(version + '/auth/login', data=self.user)
         self.assertIn('Verify credentials and try again', str(login_response.data))
         self.assertEqual(login_response.status_code, 401)
         # try login with new password. it should pass
-        login_response = self.client().post('/auth/login',
+        login_response = self.client().post(version + '/auth/login',
             data={
                 'email': 'test@user.com',
                 'password': 'new_pass'
@@ -192,7 +192,7 @@ class UserTestCase(unittest.TestCase):
         """ test resource access after password change. It shoud fail. """
         # try to view bucketlists
         response = self.client().get(
-            '/bucketlists/',
+            version + '/bucketlists/',
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 401)
@@ -201,7 +201,7 @@ class UserTestCase(unittest.TestCase):
 
         # no args
         response = self.client().post(
-            '/auth/reset-password',
+            version + '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={}
         )
@@ -210,7 +210,7 @@ class UserTestCase(unittest.TestCase):
 
         # password is space
         response = self.client().post(
-            '/auth/reset-password',
+            version + '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': ' '}
         )
@@ -219,7 +219,7 @@ class UserTestCase(unittest.TestCase):
 
         # empty pass
         response = self.client().post(
-            '/auth/reset-password',
+            version + '/auth/reset-password',
             headers=dict(Authorization=self.access_token),
             data={'password': ''}
         )
