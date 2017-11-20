@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import create_app, db
+from app import create_app, db, version
 
 class ItemTestCase(unittest.TestCase):
     """This class represents the item test case"""
@@ -28,7 +28,7 @@ class ItemTestCase(unittest.TestCase):
             'email': email,
             'password': password
         }
-        return self.client().post('/auth/register', data=user)
+        return self.client().post(version + '/auth/register', data=user)
 
     def login_user(self, email='test@user.com', password='test_pass'):
         # methods helps login created user
@@ -36,7 +36,7 @@ class ItemTestCase(unittest.TestCase):
             'email': email,
             'password': password
         }
-        return self.client().post('/auth/login', data=user)
+        return self.client().post(version + '/auth/login', data=user)
 
     def create_bucketlist(self, name='Lifestyle'):
         # method helps to create a bucketlist
@@ -44,7 +44,7 @@ class ItemTestCase(unittest.TestCase):
             'name': name
         }
         return self.client().post(
-            '/bucketlists/',
+            version + '/bucketlists/',
             headers=dict(Authorization=self.access_token),
             data=bucketlist
         )
@@ -55,7 +55,7 @@ class ItemTestCase(unittest.TestCase):
         # we need to obtain bucketlist ID
         bucketlist_id = json.loads(result.data.decode())['id']
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data=self.item
         )
@@ -68,7 +68,7 @@ class ItemTestCase(unittest.TestCase):
         # we need to obtain bucketlist ID
         bucketlist_id = json.loads(result.data.decode())['id']
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data=self.item
         )
@@ -77,7 +77,7 @@ class ItemTestCase(unittest.TestCase):
 
         # try adding one with the same name
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data=self.item
         )
@@ -91,7 +91,7 @@ class ItemTestCase(unittest.TestCase):
         # we need to obtain bucketlist ID
         bucketlist_id = json.loads(result.data.decode())['id']
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data={}
         )
@@ -100,7 +100,7 @@ class ItemTestCase(unittest.TestCase):
 
         # user supplied space
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data={'name': ' '}
         )
@@ -109,7 +109,7 @@ class ItemTestCase(unittest.TestCase):
 
         # user supplied empty string
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data={'name': ''}
         )
@@ -123,13 +123,13 @@ class ItemTestCase(unittest.TestCase):
         bucketlist_id = json.loads(result.data.decode())['id']
         # first add the item
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data=self.item
         )
         # then check if it exists
         res = self.client().get(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(res.status_code, 200)
@@ -142,21 +142,21 @@ class ItemTestCase(unittest.TestCase):
         bucketlist_id = json.loads(result.data.decode())['id']
         # first add the item
         res = self.client().post(
-            '/bucketlists/{}/items/'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token),
             data=self.item
         )
         # edit item
         item_id = json.loads(res.data.decode())['id']
         res = self.client().put(
-            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            version + '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
         self.assertEqual(res.status_code, 200)
         # then check if it has changed
         res = self.client().get(
-            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            version + '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(res.status_code, 200)
@@ -164,7 +164,7 @@ class ItemTestCase(unittest.TestCase):
 
         # update with duplicate name
         res = self.client().put(
-            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            version + '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
@@ -175,7 +175,7 @@ class ItemTestCase(unittest.TestCase):
 
         # no args
         res = self.client().put(
-            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            version + '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
             data={}
         )
@@ -184,7 +184,7 @@ class ItemTestCase(unittest.TestCase):
 
         # user supplied space
         res = self.client().put(
-            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            version + '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
             data={'name': ' '}
         )
@@ -193,7 +193,7 @@ class ItemTestCase(unittest.TestCase):
 
         # user supplied empty string
         res = self.client().put(
-            '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
+            version + '/bucketlists/{}/items/{}'.format(bucketlist_id, item_id),
             headers=dict(Authorization=self.access_token),
             data={'name': ''}
         )
@@ -209,7 +209,7 @@ class ItemTestCase(unittest.TestCase):
         item_names = ['one', 'two', 'three', 'four', 'five', 'six']
         for i in item_names:
             response = self.client().post(
-                '/bucketlists/{}/items/'.format(bucketlist_id),
+                version + '/bucketlists/{}/items/'.format(bucketlist_id),
                 headers=dict(Authorization=self.access_token),
                 data={'name': i}
             )
@@ -218,7 +218,7 @@ class ItemTestCase(unittest.TestCase):
         # then test pagination
         # it should return five items for the first page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=1&limit=5'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=1&limit=5'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -231,7 +231,7 @@ class ItemTestCase(unittest.TestCase):
         self.assertNotIn('six', str(response.data))
         # and one for the next page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=2&limit=5'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=2&limit=5'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -246,7 +246,7 @@ class ItemTestCase(unittest.TestCase):
         # test limit two
         # it should return two items for the first page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=1&limit=2'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=1&limit=2'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -259,7 +259,7 @@ class ItemTestCase(unittest.TestCase):
         self.assertNotIn('six', str(response.data))
         # it should return two items for the second page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=2&limit=2'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=2&limit=2'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -272,7 +272,7 @@ class ItemTestCase(unittest.TestCase):
         self.assertNotIn('six', str(response.data))
         # it should return two items for the third page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=3&limit=2'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=3&limit=2'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -287,7 +287,7 @@ class ItemTestCase(unittest.TestCase):
         # test limit zero
         # it should return no items for the all pages
         response = self.client().get(
-            '/bucketlists/{}/items/?page=1&limit=0'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=1&limit=0'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(response.status_code, 200)
@@ -302,7 +302,7 @@ class ItemTestCase(unittest.TestCase):
         # test no limit
         # it should return all items for the first page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=1'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=1'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(json.loads(response.data)['number_of_bucketlist_items_on_page'], 6)
@@ -314,7 +314,7 @@ class ItemTestCase(unittest.TestCase):
         self.assertIn('six', str(response.data))
         # should return none for the second page
         response = self.client().get(
-            '/bucketlists/{}/items/?page=2'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?page=2'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(json.loads(response.data)['number_of_bucketlist_items_on_page'], 0)
@@ -334,7 +334,7 @@ class ItemTestCase(unittest.TestCase):
         item_names = ['search_one', 'search_two']
         for i in item_names:
             rv = self.client().post(
-                '/bucketlists/{}/items/'.format(bucketlist_id),
+                version + '/bucketlists/{}/items/'.format(bucketlist_id),
                 headers=dict(Authorization=self.access_token),
                 data={'name': i}
             )
@@ -342,7 +342,7 @@ class ItemTestCase(unittest.TestCase):
             self.assertIn(i, str(rv.data))
         # test search with query string: one
         rv = self.client().get(
-            '/bucketlists/{}/items/?q=one'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?q=one'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(rv.status_code, 200)
@@ -350,14 +350,14 @@ class ItemTestCase(unittest.TestCase):
         self.assertNotIn('search_two', str(rv.data))
         # test search with query string: one - AnYcAsE
         rv = self.client().get(
-            '/bucketlists/{}/items/?q=OnE'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?q=OnE'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(rv.status_code, 200)
         self.assertIn('search_one', str(rv.data))
         # test search with query string: two
         rv = self.client().get(
-            '/bucketlists/{}/items/?q=two'.format(bucketlist_id),
+            version + '/bucketlists/{}/items/?q=two'.format(bucketlist_id),
             headers=dict(Authorization=self.access_token)
         )
         self.assertEqual(rv.status_code, 200)

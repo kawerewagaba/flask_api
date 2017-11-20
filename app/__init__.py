@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 
 # in memory store for revoked tokens
 revoked_tokens = []
+version = '/v1'
 
 # initialize sql-alchemy
 """
@@ -24,7 +25,7 @@ def create_app(config_name):
     db.init_app(app)
 
     """create user"""
-    @app.route('/auth/register', methods=['POST'])
+    @app.route(version + '/auth/register', methods=['POST'])
     def user_creation():
         try:
             email = request.data.get('email')
@@ -51,7 +52,7 @@ def create_app(config_name):
             return {"Error": e}
 
     """login user"""
-    @app.route('/auth/login', methods=['POST'])
+    @app.route(version + '/auth/login', methods=['POST'])
     def user_login():
         email = request.data.get('email')
         password = request.data.get('password')
@@ -79,7 +80,7 @@ def create_app(config_name):
                 return response
 
     """ logout user """
-    @app.route('/auth/logout', methods=['POST'])
+    @app.route(version + '/auth/logout', methods=['POST'])
     def user_logout():
         try:
             #get the access token from the request
@@ -92,7 +93,7 @@ def create_app(config_name):
             return {'Error': e}
 
     """ change password """
-    @app.route('/auth/reset-password', methods=['POST'])
+    @app.route(version + '/auth/reset-password', methods=['POST'])
     def change_password():
         try:
             new_pass = request.data.get('password')
@@ -121,7 +122,7 @@ def create_app(config_name):
             return {'Error': e}
 
     """create, and retrieve bucketlists"""
-    @app.route('/bucketlists/', methods=['POST', 'GET'])
+    @app.route(version + '/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
         try:
             # get the access token from the header
@@ -203,7 +204,7 @@ def create_app(config_name):
             return {'Error': e}
 
     """edit, delete bucketlist"""
-    @app.route('/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route(version + '/bucketlists/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def bucketlist_manipulation(id, **kwargs):
         try:
             # get the access token from the header
@@ -272,7 +273,7 @@ def create_app(config_name):
             return {'Authentication': 'You are not authorized to access this page'}
 
     """ add and view items """
-    @app.route('/bucketlists/<int:id>/items/', methods=['POST', 'GET'])
+    @app.route(version + '/bucketlists/<int:id>/items/', methods=['POST', 'GET'])
     def add_item(id):
         try:
             # get the access token from the header
@@ -346,7 +347,7 @@ def create_app(config_name):
             return {'Error': e}
 
     """ edit and delete item """
-    @app.route('/bucketlists/<int:bucketlist_id>/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route(version + '/bucketlists/<int:bucketlist_id>/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
     def item_edit_or_delete(bucketlist_id, item_id):
         try:
             # get the access token from the header
