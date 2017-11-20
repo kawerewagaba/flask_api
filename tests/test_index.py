@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import create_app
+from app import create_app, version
 
 class ItemTestCase(unittest.TestCase):
     """ test if landing page loads """
@@ -10,9 +10,18 @@ class ItemTestCase(unittest.TestCase):
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
 
+    # test index endpoint
     def test_index(self):
         response = self.client().get(
             '/'
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('Redirecting', str(response.data))
+
+    # test version endpoint
+    def test_version(self):
+        response = self.client().get(
+            version
         )
         self.assertEqual(response.status_code, 302)
         self.assertIn('Redirecting', str(response.data))

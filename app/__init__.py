@@ -26,6 +26,7 @@ def create_app(config_name):
 
     """ landing page """
     @app.route('/')
+    @app.route(version)
     def landing_page():
         return redirect('https://ckwagabaflaskapi.docs.apiary.io/')
 
