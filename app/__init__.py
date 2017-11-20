@@ -220,7 +220,7 @@ def create_app(config_name):
                 user_id = User.decode_token(access_token)
                 if not isinstance(user_id, str):
                     # retrieve a buckelist using it's ID
-                    bucketlist = Bucketlist.query.filter_by(id=id).first()
+                    bucketlist = Bucketlist.query.filter_by(id=id, user_id=user_id).first()
                     if not bucketlist:
                         return {
                             "message": "no bucketlist with id: {}".format(id)
@@ -364,52 +364,58 @@ def create_app(config_name):
                 if not isinstance(user_id, str):
                     # returned ID is an int
                     # go ahead and handle the request, user is authenticated
-                    item = Item.query.filter_by(id=item_id).first()
-                    if not item:
-                        return {'message': 'No item with id {}'.format(item_id)}, 404
-                    else:
-                        if request.method == 'PUT':
-                            # edit item
-                            name = request.data.get('name')
-                            if name == None or not str(name).strip():
-                                # handle invalid input
-                                return {'message': 'Enter valid input'}
+                    this_bucketlist = Bucketlist.query.filter_by(id=bucketlist_id).first()
+                    if this_bucketlist:
+                        bucketlist_user_id = this_bucketlist.user_id
+                        if bucketlist_user_id == user_id:
+                            item = Item.query.filter_by(id=item_id, bucketlist_id=bucketlist_id).first()
+                            if not item:
+                                return {'message': 'No item with id {}'.format(item_id)}, 404
                             else:
-                                # handle duplicate names first
-                                other_item = Item.query.filter_by(name=name, bucketlist_id=bucketlist_id).first()
-                                if other_item:
-                                    return {'message': 'Duplicate entry'}
+                                if request.method == 'PUT':
+                                    # edit item
+                                    name = request.data.get('name')
+                                    if name == None or not str(name).strip():
+                                        # handle invalid input
+                                        return {'message': 'Enter valid input'}
+                                    else:
+                                        # handle duplicate names first
+                                        other_item = Item.query.filter_by(name=name, bucketlist_id=bucketlist_id).first()
+                                        if other_item:
+                                            return {'message': 'Duplicate entry'}
+                                        else:
+                                            # saving item in lowercase
+                                            name = name.lower()
+                                            if name:
+                                                item.name = name
+                                                item.save()
+                                                response = jsonify({
+                                                    'id': item.id,
+                                                    'name': item.name,
+                                                    'date_created': item.date_created,
+                                                    'bucketlist_id': bucketlist_id
+                                                })
+                                                return response
+                                elif request.method == 'DELETE':
+                                    # delete item
+                                    item.delete()
+                                    return {'message': 'Item with id {} has been deleted.'.format(item_id)}, 200
                                 else:
-                                    # saving item in lowercase
-                                    name = name.lower()
-                                    if name:
-                                        item.name = name
-                                        item.save()
-                                        response = jsonify({
-                                            'id': item.id,
-                                            'name': item.name,
-                                            'date_created': item.date_created,
-                                            'bucketlist_id': bucketlist_id
-                                        })
-                                        return response
-                        elif request.method == 'DELETE':
-                            # delete item
-                            item.delete()
-                            return {'message': 'Item with id {} has been deleted.'.format(item_id)}, 200
+                                    # get item by ID
+                                    response = jsonify({
+                                        'id': item.id,
+                                        'name': item.name,
+                                        'date_created': item.date_created,
+                                        'bucketlist_id': bucketlist_id
+                                    })
+                                    response.status_code = 200
+                                    return response
                         else:
-                            # get item by ID
-                            response = jsonify({
-                                'id': item.id,
-                                'name': item.name,
-                                'date_created': item.date_created,
-                                'bucketlist_id': bucketlist_id
-                            })
-                            response.status_code = 200
-                            return response
+                            return {'Authentication': 'You are not authorized to access this page'}
                 else:
                     # authentication failure
                     # user_id returns the output from the decode function
-                    return {'Error': user_id}
+                    return {'Authentication': 'You are not authorized to access this page'}
             else:
                 return {'Authentication': 'You are not authorized to access this page'}, 401
         except Exception as e:
