@@ -1,6 +1,6 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, redirect
 import jwt
 from flask_bcrypt import Bcrypt
 
@@ -23,6 +23,11 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
+
+    """ landing page """
+    @app.route('/')
+    def landing_page():
+        return redirect('https://ckwagabaflaskapi.docs.apiary.io/')
 
     """create user"""
     @app.route(version + '/auth/register', methods=['POST'])
