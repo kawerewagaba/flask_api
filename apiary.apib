@@ -1,0 +1,443 @@
+FORMAT: 1A
+HOST: https://ckwagaba-flask-api.herokuapp.com
+
+# Bucketlist Flask API
+
+This API helps you build an application that allows users to keep track of their dreams and goals. 
+
+## Registration [/v1/auth/register]
+
+Create a new user using their desired email and password.
+
+### Create a new user [POST]
+
++ Request (application/json)
+    
+        {
+            "email": "test@user.com",
+            "password": "test_pass"
+        }
+    
++ Response 201 (application/json)
+        
+        {
+            "email": "test@user.com",
+            "id": 1
+        }
+        
+## Login [/v1/auth/login]
+
+Login user using their provided email and password.
+
+### Give the user access [POST]
+
++ Request (application/json)
+    
+        {
+            "email": "test@user.com",
+            "password": "test_pass"
+        }
+    
++ Response 200 (application/json)
+        
+        {
+            "message": "You logged in successfully",
+            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+        }
+        
+## Logout [/v1/auth/logout]
+
+Logout a user, ending their session with the application.
+
+### End user session [POST]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "message": "You logged out successfully"
+        }
+        
+## Password reset [/v1/auth/reset-password]
+
+Reset user password.
+
+### Reset user password [POST]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+        
+        + Body
+        
+            {
+                "password": "new_pass"
+            }
+    
++ Response 200 (application/json)
+        
+        {
+            "message": "Password changed successfully"
+        }
+        
+## Create bucketlists [/v1/bucketlists/]
+
+Create a user's bucketlists.
+
+### Create user bucketlists [POST]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 201 (application/json)
+        
+        {
+            "created_by": 16,
+            "date_created": "Tue, 21 Nov 2017 11:52:54 GMT",
+            "date_modified": "Tue, 21 Nov 2017 11:52:54 GMT",
+            "id": 23,
+            "name": "great stuffs"
+        }
+        
+## Get bucketlists [/v1/bucketlists/]
+
+Get a user's bucketlists.
+
+### Get user bucketlists [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlists_on_page": [
+                {
+                    "created_by": 16,
+                    "date_created": "Fri, 17 Nov 2017 15:01:05 GMT",
+                    "date_modified": "Fri, 17 Nov 2017 15:01:05 GMT",
+                    "id": 19,
+                    "name": "careers"
+                },
+                {
+                    "created_by": 16,
+                    "date_created": "Fri, 17 Nov 2017 15:01:10 GMT",
+                    "date_modified": "Fri, 17 Nov 2017 15:01:10 GMT",
+                    "id": 20,
+                    "name": "career"
+                }
+            ],
+            "number_of_bucketlists_on_page": 2
+        }
+        
+## Get bucketlists with a limit [/v1/bucketlists/?limit=2]
+
+Get a certain number of the user's bucketlists.
+
+### Get user bucketlists with limit [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlists_on_page": [
+                {
+                    "created_by": 16,
+                    "date_created": "Fri, 17 Nov 2017 15:01:05 GMT",
+                    "date_modified": "Fri, 17 Nov 2017 15:01:05 GMT",
+                    "id": 19,
+                    "name": "careers"
+                },
+                {
+                    "created_by": 16,
+                    "date_created": "Fri, 17 Nov 2017 15:01:10 GMT",
+                    "date_modified": "Fri, 17 Nov 2017 15:01:10 GMT",
+                    "id": 20,
+                    "name": "career"
+                }
+            ],
+            "number_of_bucketlists_on_page": 2
+        }
+        
+## Get a particular bucketlist [/v1/bucketlists/19]
+
+Get a certain number of the user's bucketlists.
+
+### Get bucketlist with id [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "created_by": 16,
+            "date_created": "Fri, 17 Nov 2017 15:01:05 GMT",
+            "date_modified": "Fri, 17 Nov 2017 15:01:05 GMT",
+            "id": 19,
+            "name": "careers"
+        }
+        
+## Update a particular bucketlist [/v1/bucketlists/10]
+
+Edit a particular bucketlist.
+
+### Update bucketlist with id [PUT]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "created_by": 16,
+            "date_created": "Fri, 17 Nov 2017 15:01:05 GMT",
+            "date_modified": "Fri, 17 Nov 2017 15:01:05 GMT",
+            "id": 19,
+            "name": "careers"
+        }
+        
+## Delete a particular bucketlist [/v1/bucketlists/11]
+
+Delete a particular bucketlist.
+
+### Delete bucketlist with id [DELETE]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "message": "bucketlist 11 deleted successfully"
+        }
+        
+## Search for a particular bucketlist by name [/v1/bucketlists/q=careers]
+
+Search a particular bucketlist.
+
+### Search bucketlist with id [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlists_on_page": [
+                {
+                    "created_by": 16,
+                    "date_created": "Fri, 17 Nov 2017 16:05:03 GMT",
+                    "date_modified": "Fri, 17 Nov 2017 16:05:03 GMT",
+                    "id": 22,
+                    "name": "careerss"
+                }
+            ],
+            "number_of_bucketlists_on_page": 1
+        }
+        
+## Pagination [/v1/bucketlists/page=1&limit=1]
+
+Get a certain number of bucketlists on each page.
+
+### Pagination [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlists_on_page": [
+                {
+                    "created_by": 16,
+                    "date_created": "Fri, 17 Nov 2017 15:01:10 GMT",
+                    "date_modified": "Fri, 17 Nov 2017 15:01:10 GMT",
+                    "id": 20,
+                    "name": "career"
+                }
+            ],
+            "number_of_bucketlists_on_page": 1
+        }
+        
+## Create bucketlist items [/v1/bucketlists/20/items]
+
+Create a user's bucketlist items.
+
+### Create user bucketlist items [POST]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 201 (application/json)
+        
+        {
+            "bucketlist_id": 22,
+            "date_created": "Tue, 21 Nov 2017 11:54:06 GMT",
+            "id": 13,
+            "name": "great stuffs"
+        }
+        
+## Get Items [/v1/bucketlists/20/items/]
+
+Get a user's bucketlist items.
+
+### Get user items [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlist_items_on_page": [
+                {
+                    "bucketlist_id": 20,
+                    "date_created": "Tue, 21 Nov 2017 11:40:52 GMT",
+                    "id": 12,
+                    "name": "do great stuff"
+                }
+            ],
+            "number_of_bucketlist_items_on_page": 1
+        }
+        
+## Get bucketlist items with a limit [/v1/bucketlists/20/items/?limit=2]
+
+Get a certain number of the user's bucketlist items.
+
+### Get user bucketlist items with limit [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlist_items_on_page": [
+                {
+                    "bucketlist_id": 20,
+                    "date_created": "Tue, 21 Nov 2017 11:40:52 GMT",
+                    "id": 12,
+                    "name": "do great stuff"
+                }
+            ],
+            "number_of_bucketlist_items_on_page": 1
+        }
+        
+## Get a particular bucketlist item [/v1/bucketlists/20/items/12]
+
+Get a certain user's bucketlist item.
+
+### Get bucketlist item with id [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlist_id": 20,
+            "date_created": "Tue, 21 Nov 2017 11:40:52 GMT",
+            "id": 12,
+            "name": "do great stuff"
+        }
+        
+## Update a particular bucketlist item [/v1/bucketlists/20/items/10]
+
+Edit a particular bucketlist item.
+
+### Update bucketlist item with id [PUT]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlist_id": 20,
+            "date_created": "Tue, 21 Nov 2017 11:40:52 GMT",
+            "id": 12,
+            "name": "great stuff"
+        }
+        
+## Delete a particular bucketlist item [/v1/bucketlists/20/items/13]
+
+Delete a particular bucketlist item.
+
+### Delete bucketlist with id [DELETE]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "message": "bucketlist item 13 deleted successfully"
+        }
+        
+## Search for a particular bucketlist item by name [/v1/bucketlists/20/items/?q=stuff]
+
+Search a particular bucketlist.
+
+### Search bucketlist with id [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlist_items_on_page": [
+                {
+                    "bucketlist_id": 20,
+                    "date_created": "Tue, 21 Nov 2017 11:40:52 GMT",
+                    "id": 12,
+                    "name": "great stuff"
+                }
+            ],
+            "number_of_bucketlist_items_on_page": 1
+        }
+        
+## Pagination [/v1/bucketlists/20/items/?page=1&limit=1]
+
+Get a certain number of bucketlist items on each page.
+
+### Pagination [GET]
+
++ Request (application/json)
+    
+        + Headers Authorization: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MTExODAyMjksImlhdCI6MTUxMTE3NjYyOSwic3ViIjoxNn0.LlQTs1fyA76CWNzu_ZdiboOj3edSH-OWtlpxLs-0wFE"
+    
++ Response 200 (application/json)
+        
+        {
+            "bucketlist_items_on_page": [
+                {
+                    "bucketlist_id": 20,
+                    "date_created": "Tue, 21 Nov 2017 11:40:52 GMT",
+                    "id": 12,
+                    "name": "great stuff"
+                }
+            ],
+            "number_of_bucketlist_items_on_page": 1
+        }
