@@ -39,12 +39,12 @@ def create_app(config_name):
             # handle invalid input
             if email == None or password == None or not str(email).strip() or not str(password).strip():
                 # no args
-                return {'message': 'Enter valid input'}
+                return {'message': 'Enter valid input'}, 400
             else:
                 # check if user with email exists
                 user = User.query.filter_by(email=email).first()
                 if user:
-                    return {"Error": 'Email address: <' + email + '> already taken.'}
+                    return {"Error": 'Email address: <' + email + '> already taken.'}, 409
                 else:
                     user = User(email, password)
                     user.save()
@@ -64,7 +64,7 @@ def create_app(config_name):
         password = request.data.get('password')
         if email == None or password == None:
             # no args
-            return {'message': 'Enter valid input'}, 401
+            return {'message': 'Enter valid input'}, 400
         else:
             # first check if user with email exists
             user = User.query.filter_by(email=request.data.get('email')).first()
@@ -93,7 +93,7 @@ def create_app(config_name):
             access_token = request.headers.get('Authorization')
             if access_token:
                 revoked_tokens.append(access_token)
-                return {'message': 'You logged out successfully'}
+                return {'message': 'You logged out successfully'}, 200
         except Exception as e:
             # something went wrong on the server side
             return {'Error': e}
@@ -106,7 +106,7 @@ def create_app(config_name):
             # handle invalid input
             if new_pass == None or not str(new_pass).strip():
                 # no args
-                return {'message': 'Enter valid input'}
+                return {'message': 'Enter valid input'}, 400
             else:
                 access_token = request.headers.get('Authorization')
                 if access_token:
@@ -144,7 +144,7 @@ def create_app(config_name):
                         name = request.data.get('name')
                         if name == None or not str(name).strip():
                             # handle invalid input
-                            return {'message': 'Enter valid input'}
+                            return {'message': 'Enter valid input'}, 400
                         else:
                             # saving bucketlists in lowercase
                             name = name.lower()
@@ -152,7 +152,7 @@ def create_app(config_name):
                                 # check for duplicates for this bucketlist
                                 bucketlist = Bucketlist.query.filter_by(name=name, user_id=user_id).first()
                                 if bucketlist:
-                                    return {'message': 'Duplicate entry'}
+                                    return {'message': 'Duplicate entry'}, 409
                                 else:
                                     bucketlist = Bucketlist(name=name, user_id=user_id)
                                     bucketlist.save()
@@ -238,7 +238,7 @@ def create_app(config_name):
                         name = request.data.get('name')
                         if name == None or not str(name).strip():
                             # handle invalid input
-                            return {'message': 'Enter valid input'}
+                            return {'message': 'Enter valid input'}, 400
                         else:
                             # saving bucketlists in lowercase
                             name = name.lower()
@@ -246,7 +246,7 @@ def create_app(config_name):
                                 # check for duplicates for this bucketlist
                                 other_bucketlist = Bucketlist.query.filter_by(name=name, user_id=user_id).first()
                                 if other_bucketlist:
-                                    return {'message': 'Duplicate entry'}
+                                    return {'message': 'Duplicate entry'}, 409
                                 else:
                                     bucketlist.name = name
                                     bucketlist.save()
@@ -294,7 +294,7 @@ def create_app(config_name):
                         name = request.data.get('name')
                         if name == None or not str(name).strip():
                             # handle invalid input
-                            return {'message': 'Enter valid input'}
+                            return {'message': 'Enter valid input'}, 400
                         else:
                             # saving item in lowercase
                             name = name.lower()
@@ -302,7 +302,7 @@ def create_app(config_name):
                                 # handle duplicate names first
                                 other_item = Item.query.filter_by(name=name, bucketlist_id=id).first()
                                 if other_item:
-                                    return {'message': 'Duplicate entry'}
+                                    return {'message': 'Duplicate entry'}, 409
                                 else:
                                     item = Item(name=name, bucketlist_id=id)
                                     item.save()
@@ -377,12 +377,12 @@ def create_app(config_name):
                                     name = request.data.get('name')
                                     if name == None or not str(name).strip():
                                         # handle invalid input
-                                        return {'message': 'Enter valid input'}
+                                        return {'message': 'Enter valid input'}, 400
                                     else:
                                         # handle duplicate names first
                                         other_item = Item.query.filter_by(name=name, bucketlist_id=bucketlist_id).first()
                                         if other_item:
-                                            return {'message': 'Duplicate entry'}
+                                            return {'message': 'Duplicate entry'}, 409
                                         else:
                                             # saving item in lowercase
                                             name = name.lower()
@@ -411,11 +411,11 @@ def create_app(config_name):
                                     response.status_code = 200
                                     return response
                         else:
-                            return {'Authentication': 'You are not authorized to access this page'}
+                            return {'Authentication': 'You are not authorized to access this page'}, 401
                 else:
                     # authentication failure
                     # user_id returns the output from the decode function
-                    return {'Authentication': 'You are not authorized to access this page'}
+                    return {'Authentication': 'You are not authorized to access this page'}, 401
             else:
                 return {'Authentication': 'You are not authorized to access this page'}, 401
         except Exception as e:

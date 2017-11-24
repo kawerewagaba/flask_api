@@ -53,7 +53,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={'email': 'test@user.com', 'password': 'test_pass'}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 409)
         self.assertIn('already taken', str(response.data))
 
     def test_user_invalid_input(self):
@@ -63,7 +63,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={'email': '', 'password': 'test_pass'}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # email is space
@@ -71,7 +71,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={'email': ' ', 'password': 'test_pass'}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # no password
@@ -79,7 +79,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={'email': 'invalid@user.com', 'password': ''}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # password is space
@@ -87,7 +87,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={'email': 'invalid@user.com', 'password': ' '}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # no email and password
@@ -95,7 +95,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={'email': '', 'password': ''}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # no keys sent
@@ -103,7 +103,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/register',
             data={}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
     def test_user_login(self):
@@ -126,7 +126,7 @@ class UserTestCase(unittest.TestCase):
             version + '/auth/login',
             data={}
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
     def test_user_logout(self):
@@ -205,7 +205,7 @@ class UserTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # password is space
@@ -214,7 +214,7 @@ class UserTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'password': ' '}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
         # empty pass
@@ -223,7 +223,7 @@ class UserTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'password': ''}
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         self.assertIn('Enter valid input', str(response.data))
 
     def tearDown(self):
