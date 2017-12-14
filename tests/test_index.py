@@ -15,16 +15,16 @@ class ItemTestCase(unittest.TestCase):
         response = self.client().get(
             '/'
         )
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('Redirecting', str(response.data))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Bucketlist Flask API', str(response.data))
 
     # test version endpoint
     def test_version(self):
         response = self.client().get(
             version
         )
-        self.assertEqual(response.status_code, 302)
-        self.assertIn('Redirecting', str(response.data))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Bucketlist Flask API', str(response.data))
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
