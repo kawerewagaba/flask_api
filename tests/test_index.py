@@ -16,7 +16,7 @@ class ItemTestCase(unittest.TestCase):
             '/'
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Bucketlist Flask API', str(response.data))
+        self.assertIn('Bucketlist', str(response.data))
 
     # test version endpoint
     def test_version(self):
@@ -24,7 +24,7 @@ class ItemTestCase(unittest.TestCase):
             version
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Bucketlist Flask API', str(response.data))
+        self.assertIn('Bucketlist', str(response.data))
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

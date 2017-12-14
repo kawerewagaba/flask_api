@@ -2,14 +2,31 @@
 <html lang="en">
 
   <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width">
-  <meta name="viewport" content="initial-scale=1.0">
-  <title>Bucketlist | Track your dreams and goals.</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+    <script src="https://api.apiary.io/seeds/embed.js"></script>
+    <title>Bucketlist | Track your dreams and goals.</title>
   </head>
 
   <body>
-    
+    <div class="container" id="documentation"></div>
+    <script>
+      new Apiary.Embed({
+        "subdomain": "wagaba",
+        "preferences": {
+          "element": "#documentation",
+          "displayHttpMethods": true
+        },
+        "theme": {
+          "fontFamily": "Roboto"
+        },
+        "customFonts": {
+          "googleFonts": "https://fonts.googleapis.com/css?family=Roboto"
+        }
+      })
+    </script>
   </body>
 
 </html>
