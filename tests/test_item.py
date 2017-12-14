@@ -81,7 +81,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data=self.item
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 409)
         self.assertIn('Duplicate entry', str(res.data))
 
     def test_item_invalid_input(self):
@@ -95,7 +95,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
         # user supplied space
@@ -104,7 +104,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ' '}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
         # user supplied empty string
@@ -113,7 +113,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ''}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
     def test_get_items_in_bucketlist(self):
@@ -168,7 +168,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': 'build a family house'}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 409)
         self.assertIn('Duplicate entry', str(res.data))
 
         """update with invalid input"""
@@ -179,7 +179,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
         # user supplied space
@@ -188,7 +188,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ' '}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
         # user supplied empty string
@@ -197,7 +197,7 @@ class ItemTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ''}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
     def test_bukcetlist_item_pagination(self):

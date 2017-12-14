@@ -65,7 +65,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data=self.bucketlist
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 409)
         self.assertIn('Duplicate entry', str(res.data))
 
     def test_bucketlist_invalid_input(self):
@@ -76,7 +76,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
         # user supplied space
@@ -85,7 +85,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ' '}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
         # user supplied empty string
@@ -94,7 +94,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ''}
         )
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 400)
         self.assertIn('Enter valid input', str(res.data))
 
     def test_api_can_get_all_bucketlists(self):
@@ -158,7 +158,7 @@ class BucketlistTestCase(unittest.TestCase):
                 "name": "Lifestyle goals"
             }
         )
-        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.status_code, 409)
         self.assertIn('Duplicate entry', str(rv.data))
 
         """update with invalid input"""
@@ -169,7 +169,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={}
         )
-        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.status_code, 400)
         self.assertIn('Enter valid input', str(rv.data))
 
         # user supplied space
@@ -178,7 +178,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ' '}
         )
-        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.status_code, 400)
         self.assertIn('Enter valid input', str(rv.data))
 
         # user supplied empty string
@@ -187,7 +187,7 @@ class BucketlistTestCase(unittest.TestCase):
             headers=dict(Authorization=self.access_token),
             data={'name': ''}
         )
-        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.status_code, 400)
         self.assertIn('Enter valid input', str(rv.data))
 
     def test_bucketlist_deletion(self):
