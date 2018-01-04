@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort, render_template
 import jwt
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS, cross_origin
 
 # in memory store for revoked tokens
 revoked_tokens = []
@@ -20,6 +21,7 @@ from app.models import *
 
 def create_app(config_name):
     app = FlaskAPI(__name__, instance_relative_config=True)
+    CORS(app)
     app.config.from_object(app_config[config_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
