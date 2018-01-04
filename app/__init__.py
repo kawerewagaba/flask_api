@@ -41,21 +41,16 @@ def create_app(config_name):
             # handle invalid input
             if email == None or password == None or not str(email).strip() or not str(password).strip():
                 # no args
-                return {'message': 'Enter valid input'}, 400
+                return {'message': 'Enter valid input.'}, 400
             else:
                 # check if user with email exists
                 user = User.query.filter_by(email=email).first()
                 if user:
-                    return {"Error": 'Email address: <' + email + '> already taken.'}, 409
+                    return {"message": 'Email address already taken.'}, 409
                 else:
                     user = User(email, password)
                     user.save()
-                    response = jsonify({
-                        'id': user.id,
-                        'email': user.email
-                    })
-                    response.status_code = 201
-                    return response
+                    return {"message": 'Account created successfully.'}, 201
         except Exception as e:
             return {"Error": e}
 

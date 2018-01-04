@@ -44,7 +44,7 @@ class UserTestCase(unittest.TestCase):
         """Test API can create a user (POST request) """
         response = self.client().post(version + '/auth/register', data=self.user)
         self.assertEqual(response.status_code, 201)
-        self.assertIn(self.user['email'], str(response.data))
+        self.assertIn('successfully', str(response.data))
 
     def test_user_duplicate_email(self):
         """ handle duplicate user """
