@@ -59,7 +59,7 @@ def create_app(config_name):
     def user_login():
         email = request.data.get('email')
         password = request.data.get('password')
-        if email == None or password == None:
+        if email == None or password == None or not str(email).strip() or not str(password).strip():
             # no args
             return {'message': 'Enter valid input'}, 400
         else:
