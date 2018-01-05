@@ -117,7 +117,7 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(login_response.status_code, 200)
         #get the results in json format
         result = json.loads(login_response.data)
-        self.assertEqual(result['message'], "You logged in successfully")
+        self.assertEqual(result['message'], "You logged in successfully.")
         # test that there is an access token created
         self.assertTrue(result['access_token'])
 
