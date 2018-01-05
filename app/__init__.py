@@ -61,7 +61,7 @@ def create_app(config_name):
         password = request.data.get('password')
         if email == None or password == None or not str(email).strip() or not str(password).strip():
             # no args
-            return {'message': 'Enter valid input'}, 400
+            return {'message': 'Enter valid input.'}, 400
         else:
             # first check if user with email exists
             user = User.query.filter_by(email=request.data.get('email')).first()
@@ -71,14 +71,14 @@ def create_app(config_name):
                 access_token = user.generate_token(user.id)
                 if access_token:
                     response = {
-                        'message': 'You logged in successfully',
+                        'message': 'You logged in successfully.',
                         'access_token': access_token.decode()
                     }, 200
                     return response
             else:
                 # user does not exists
                 response = {
-                    'message': 'Verify credentials and try again'
+                    'message': 'Verify credentials and try again.'
                 }, 401
                 return response
 
