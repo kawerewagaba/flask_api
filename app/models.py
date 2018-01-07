@@ -14,7 +14,7 @@ class User(db.Model):
 
     # Define the columns of the users table, starting with the primary key
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(256), nullable=False, unique=True)
+    email = db.Column(db.String(256), nullable=False)
     password = db.Column(db.String(256), nullable=False)
     bucketlists = db.relationship(
         'Bucketlist', backref='users', lazy=True
@@ -83,7 +83,7 @@ class Bucketlist(db.Model):
     __tablename__ = 'bucketlists'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(255))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
