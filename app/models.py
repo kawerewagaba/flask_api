@@ -91,7 +91,7 @@ class Bucketlist(db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     items = db.relationship(
-        'Item', backref='bucketlists', lazy=True
+        'Item', backref='bucketlists', lazy=True, cascade="all, delete-orphan"
     )
 
     def __init__(self, name, user_id):
