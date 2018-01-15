@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort, render_template
 import jwt
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS, cross_origin
 
 # in memory store for revoked tokens
 revoked_tokens = []
@@ -20,6 +21,7 @@ from app.models import *
 
 def create_app(config_name):
     app = FlaskAPI(__name__, instance_relative_config=True)
+    CORS(app)
     app.config.from_object(app_config[config_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -39,21 +41,16 @@ def create_app(config_name):
             # handle invalid input
             if email == None or password == None or not str(email).strip() or not str(password).strip():
                 # no args
-                return {'message': 'Enter valid input'}, 400
+                return {'message': 'Enter valid input.'}, 400
             else:
                 # check if user with email exists
                 user = User.query.filter_by(email=email).first()
                 if user:
-                    return {"Error": 'Email address: <' + email + '> already taken.'}, 409
+                    return {"message": 'Email address already taken.'}, 409
                 else:
                     user = User(email, password)
                     user.save()
-                    response = jsonify({
-                        'id': user.id,
-                        'email': user.email
-                    })
-                    response.status_code = 201
-                    return response
+                    return {"message": 'Account created successfully.'}, 201
         except Exception as e:
             return {"Error": e}
 
@@ -62,9 +59,9 @@ def create_app(config_name):
     def user_login():
         email = request.data.get('email')
         password = request.data.get('password')
-        if email == None or password == None:
+        if email == None or password == None or not str(email).strip() or not str(password).strip():
             # no args
-            return {'message': 'Enter valid input'}, 400
+            return {'message': 'Enter valid input.'}, 400
         else:
             # first check if user with email exists
             user = User.query.filter_by(email=request.data.get('email')).first()
@@ -74,14 +71,14 @@ def create_app(config_name):
                 access_token = user.generate_token(user.id)
                 if access_token:
                     response = {
-                        'message': 'You logged in successfully',
+                        'message': 'You logged in successfully.',
                         'access_token': access_token.decode()
                     }, 200
                     return response
             else:
                 # user does not exists
                 response = {
-                    'message': 'Verify credentials and try again'
+                    'message': 'Verify credentials and try again.'
                 }, 401
                 return response
 
